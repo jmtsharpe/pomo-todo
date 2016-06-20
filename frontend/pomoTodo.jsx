@@ -1,14 +1,16 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-var MyComponent = React.createClass({
-  render() {
-    return(
-      <div>I'm ALIVE!</div>
-    );
-  }
-});
+var Index = require('./components/tasks/index.jsx');
+
+// var MyComponent = React.createClass({
+//   render() {
+//     return(
+//       <div>I'm ALIVE!</div>
+//     );
+//   }
+// });
 
 document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(<MyComponent />, document.getElementById('main'));
+  ReactDOM.render(<Index />, document.getElementById('root'));
 });
