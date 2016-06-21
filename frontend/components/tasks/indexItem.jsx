@@ -1,6 +1,8 @@
 var React = require('react');
 var TaskEditForm = require('./editForm');
 
+const enhanceWithClickOutside = require('react-click-outside');
+
 var ApiUtil = require('./../../util/apiUtil');
 
 var TaskStore = require('./../../stores/task');
@@ -90,4 +92,4 @@ var TaskIndexItem = React.createClass({
   }
 });
 
-module.exports = TaskIndexItem;
+module.exports = enhanceWithClickOutside(TaskIndexItem);
