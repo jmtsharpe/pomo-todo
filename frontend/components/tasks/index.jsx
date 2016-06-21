@@ -8,14 +8,10 @@ var TaskFormButton = require('./../tasks/formButton');
 
 var TaskStore = require('./../../stores/task');
 
-// var LinkedStateMixin = require('react-addons-linked-state-mixin');
-// var OnClickOutside = require('react-onclickoutside');
-
 var TaskIndex = React.createClass({
-	// mixins: [OnClickOutside, LinkedStateMixin],
 
 	getInitialState: function () {
-		return ({ pressed: false });
+		return ({ pressed: false, tasks: [] });
 	},
 
 	isPressed: function () {
@@ -26,55 +22,42 @@ var TaskIndex = React.createClass({
 		this.setState({pressed: false});
 	},
 
-	componentWillReceiveProps: function (newProps) {
-    this.setState({ card: newProps.card, subject: newProps.card.subject })
-  	},
-
-	_onChange: function () {
-		ApiUtil.fetchAllCards(this.props.card.board_id);
-	},
-
-
 	componentDidMount: function () {
 		this.taskListener = TaskStore.addListener(this._onChange);
+		ApiUtil.fetchAllTasks();
 	},
+
+	_onChange: function () {
+		var tasks = TaskStore.all();
+    	this.setState({ tasks: tasks });
+  	},
 
 	componentWillUnmount: function () {
 		this.taskListener.remove();
 	},
 
-	handleClickOutside: function (e) {
-	    this.setState({ pressed: false });
-	},
-
-	// editCard: function (event) {
- //    event.preventDefault();
- //    var card = {};
- //    Object.keys(this.state).forEach(function (key) {
- //      { card.subject = this.state.subject; }
- //    }.bind(this));
- //    card.id = this.props.card.id;
-	// 	card.boardId = this.props.card.board_id;
- //    ApiUtil.editCard(card);
- //    this.setState({ pressed: false });
- //  },
-
   render: function () {
-
+  		debugger
+  		if (this.state.tasks && this.state.tasks.length > 0 ) {
+  			debugger
+  			var tasks = []
+  			this.state.tasks.map(function (task) {
+				tasks.push(<li><TaskIndexItem  task={task} /></li>)
+				
+			});
+  		}; 
 		return ( 
 			<li className="task-index-container" >
 				<div className="task-index" >
-	    			<h2 onClick={this.isPressed} className="card-title">
-
-					</h2>
 					<ul>
+						{tasks}
 					</ul>
 					<TaskFormButton
 						className="task-creation-div"
 					/>
 				</div>
 			</li>
-		)
+		);
 	}	
   }
 );

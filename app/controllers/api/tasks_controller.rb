@@ -1,9 +1,10 @@
-class TasksController < ApplicationController
+class Api::TasksController < ApplicationController
 
   def new
   end
 
   def create
+    debugger
     @task = Task.new(task_params)
     if @task.save
       render :show

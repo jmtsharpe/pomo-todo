@@ -17,3 +17,11 @@ button, article, footer, small {
  background: transparent;
  box-shadow: none;
 }
+
+body {
+	background: #FF6347;
+}
+
+.task-creation-button p {
+	color: blue;
+}

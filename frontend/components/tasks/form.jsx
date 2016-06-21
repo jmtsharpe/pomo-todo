@@ -1,26 +1,22 @@
 var React = require('react');
 var ApiUtil = require('../../util/apiUtil');
-// var LinkedStateMixin = require('react-addons-linked-state-mixin');
 
 var TaskForm = React.createClass({
-  // contextTypes: {
-  //     router: React.PropTypes.object.isRequired
-  //   },
-  // mixins: [LinkedStateMixin],
 
   blankAttrs: {
-    subject: '',
-    card_id: ''
+    subject: ''
   },
 
   getInitialState: function () {
-    return this.blankAttrs;
+    return {subject: event.target.value, pomodoros: 0};
   },
 
   createTask: function (event) {
+    debugger
     event.preventDefault();
     var task = {};
     Object.keys(this.state).forEach(function (key) {
+      debugger
       { task[key] = this.state[key]; }
     }.bind(this));
     task.card_id = this.props.cardId;
@@ -28,6 +24,15 @@ var TaskForm = React.createClass({
     this.setState(this.blankAttrs);
   },
 
+  updatePomos: function (event) {
+    debugger
+    this.setState({ pomodoros: event.target.value})
+    debugger
+  },
+
+  updateSubject: function (event) {
+    this.setState({ subject: event.target.value})
+  },
 
   render: function () {
     return(
@@ -37,9 +42,11 @@ var TaskForm = React.createClass({
             className="task-form-field"
             type='text'
             id='task_subject'
-            valueLink={this.linkState("subject")}
+            onChange={this.updateSubject}
+            value={this.state.subject}
           />
           <br />
+          <input type="number" step="1" id="pomodoro-amount" onChange={this.updatePomos} value={this.state.pomodoros} />
   				<button className="submit">Save</button>
         </form>
       </div>

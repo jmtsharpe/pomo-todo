@@ -2,13 +2,15 @@ var TaskActions = require('../actions/taskActions.js');
 
 module.exports = {
 
-	fetchAllTasks: function (board_id, card_id) {
+	fetchAllTasks: function () {
+    debugger
 
     $.ajax({
-      url: "api/boards/" + board_id + "/cards/" + card_id + "/tasks",
+      url: "api/tasks",
       method: "GET",
       dataType: "json",
       success: function (tasks) {
+        debugger
         TaskActions.receiveAllTasks(tasks);
       },
       error: function (tasks) {
@@ -18,8 +20,9 @@ module.exports = {
   },
 
   createTask: function (task, board_id, card_id) {
+    debugger
     $.ajax({
-      url: "api/boards/" + board_id + "/cards/" + card_id + "/tasks",
+      url: "api/tasks",
       method: "POST",
       data: {task: task},
       dataType: "json",
@@ -31,7 +34,7 @@ module.exports = {
 
 	editTask: function (newTask, task) {
     $.ajax({
-      url: "api/boards/1/cards/" + task.card_id + "/tasks/" + task.id,
+      url: "api/tasks/" + task.id,
       method: "PATCH",
       data: {task: newTask},
       dataType: "json",

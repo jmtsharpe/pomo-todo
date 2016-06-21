@@ -20370,16 +20370,12 @@
 	
 	var TaskStore = __webpack_require__(178);
 	
-	// var LinkedStateMixin = require('react-addons-linked-state-mixin');
-	// var OnClickOutside = require('react-onclickoutside');
-	
 	var TaskIndex = React.createClass({
 		displayName: 'TaskIndex',
 	
-		// mixins: [OnClickOutside, LinkedStateMixin],
 	
 		getInitialState: function getInitialState() {
-			return { pressed: false };
+			return { pressed: false, tasks: [] };
 		},
 	
 		isPressed: function isPressed() {
@@ -20390,48 +20386,44 @@
 			this.setState({ pressed: false });
 		},
 	
-		componentWillReceiveProps: function componentWillReceiveProps(newProps) {
-			this.setState({ card: newProps.card, subject: newProps.card.subject });
+		componentDidMount: function componentDidMount() {
+			this.taskListener = TaskStore.addListener(this._onChange);
+			ApiUtil.fetchAllTasks();
 		},
 	
 		_onChange: function _onChange() {
-			ApiUtil.fetchAllCards(this.props.card.board_id);
-		},
-	
-		componentDidMount: function componentDidMount() {
-			this.taskListener = TaskStore.addListener(this._onChange);
+			var tasks = TaskStore.all();
+			this.setState({ tasks: tasks });
 		},
 	
 		componentWillUnmount: function componentWillUnmount() {
 			this.taskListener.remove();
 		},
 	
-		handleClickOutside: function handleClickOutside(e) {
-			this.setState({ pressed: false });
-		},
-	
-		// editCard: function (event) {
-		//    event.preventDefault();
-		//    var card = {};
-		//    Object.keys(this.state).forEach(function (key) {
-		//      { card.subject = this.state.subject; }
-		//    }.bind(this));
-		//    card.id = this.props.card.id;
-		// 	card.boardId = this.props.card.board_id;
-		//    ApiUtil.editCard(card);
-		//    this.setState({ pressed: false });
-		//  },
-	
 		render: function render() {
-	
+			debugger;
+			if (this.state.tasks && this.state.tasks.length > 0) {
+				debugger;
+				var tasks = [];
+				this.state.tasks.map(function (task) {
+					tasks.push(React.createElement(
+						'li',
+						null,
+						React.createElement(TaskIndexItem, { task: task })
+					));
+				});
+			};
 			return React.createElement(
 				'li',
 				{ className: 'task-index-container' },
 				React.createElement(
 					'div',
 					{ className: 'task-index' },
-					React.createElement('h2', { onClick: this.isPressed, className: 'card-title' }),
-					React.createElement('ul', null),
+					React.createElement(
+						'ul',
+						null,
+						tasks
+					),
 					React.createElement(TaskFormButton, {
 						className: 'task-creation-div'
 					})
@@ -20452,13 +20444,15 @@
 	
 	module.exports = {
 	
-	  fetchAllTasks: function fetchAllTasks(board_id, card_id) {
+	  fetchAllTasks: function fetchAllTasks() {
+	    debugger;
 	
 	    $.ajax({
-	      url: "api/boards/" + board_id + "/cards/" + card_id + "/tasks",
+	      url: "api/tasks",
 	      method: "GET",
 	      dataType: "json",
 	      success: function success(tasks) {
+	        debugger;
 	        TaskActions.receiveAllTasks(tasks);
 	      },
 	      error: function error(tasks) {
@@ -20468,8 +20462,9 @@
 	  },
 	
 	  createTask: function createTask(task, board_id, card_id) {
+	    debugger;
 	    $.ajax({
-	      url: "api/boards/" + board_id + "/cards/" + card_id + "/tasks",
+	      url: "api/tasks",
 	      method: "POST",
 	      data: { task: task },
 	      dataType: "json",
@@ -20481,7 +20476,7 @@
 	
 	  editTask: function editTask(newTask, task) {
 	    $.ajax({
-	      url: "api/boards/1/cards/" + task.card_id + "/tasks/" + task.id,
+	      url: "api/tasks/" + task.id,
 	      method: "PATCH",
 	      data: { task: newTask },
 	      dataType: "json",
@@ -20853,110 +20848,121 @@
 	
 	var React = __webpack_require__(1);
 	var TaskEditForm = __webpack_require__(177);
-	// var OnClickOutside = require('react-onclickoutside');
-	// var LinkedStateMixin = require('react-addons-linked-state-mixin');
+	
 	var ApiUtil = __webpack_require__(169);
-	// var Modal = require('react-modal');
-	// var App = require('./../app/app');
+	
 	var TaskStore = __webpack_require__(178);
-	// CardStore = require('./../../stores/card');
 	
 	var TaskIndexItem = React.createClass({
-		displayName: 'TaskIndexItem',
+			displayName: 'TaskIndexItem',
 	
-		// mixins: [OnClickOutside, LinkedStateMixin],
 	
-		contextTypes: {
-			router: React.PropTypes.object.isRequired
-		},
+			getInitialState: function getInitialState() {
+					return {
+							pressed: false,
+							subject: this.props.task.subject,
+							pomodoros: this.props.task.pomodoros,
+							task: this.props.task
+					};
+			},
 	
-		getInitialState: function getInitialState() {
-			return {
-				pressed: false,
-				subject: this.props.task.subject,
-				task: this.props.task
-			};
-		},
+			isPressed: function isPressed() {
+					this.setState({ pressed: !this.state.pressed });
+			},
 	
-		isPressed: function isPressed() {
-			this.setState({ pressed: !this.state.pressed });
-		},
+			handleClickOutside: function handleClickOutside(e) {
+					this.setState({ pressed: false });
+			},
 	
-		handleClickOutside: function handleClickOutside(e) {
-			this.setState({ pressed: false });
-		},
+			editTask: function editTask(event) {
 	
-		editTask: function editTask(event) {
+					event.preventDefault();
+					var task = {};
+					Object.keys(this.state).forEach(function (key) {
+							{
+									task[key] = this.state[key];
+							}
+					}.bind(this));
+					task.id = this.state.task.id;
+					ApiUtil.editTask(task, this.props.task);
+					this.setState({ pressed: false });
+			},
 	
-			event.preventDefault();
-			var task = {};
-			Object.keys(this.state).forEach(function (key) {
-				{
-					task[key] = this.state[key];
-				}
-			}.bind(this));
-			task.id = this.state.task.id;
-			ApiUtil.editTask(task, this.props.task);
-			this.setState({ pressed: false });
-		},
+			updatePomos: function updatePomos(event) {
+					debugger;
+					this.setState({ pomodoros: event.target.value });
+					debugger;
+			},
 	
-		render: function render() {
+			updateSubject: function updateSubject(event) {
+					this.setState({ subject: event.target.value });
+			},
 	
-			if (!this.state.pressed) {
-				return React.createElement(
-					'div',
-					{ className: 'task-list-padding' },
-					React.createElement(
-						'div',
-						{ className: 'task-list-item', onClick: this.isPressed },
-						React.createElement(
-							'p',
-							null,
-							this.state.subject
-						)
-					)
-				);
+			render: function render() {
+	
+					if (!this.state.pressed) {
+							return React.createElement(
+									'div',
+									{ className: 'task-list-padding' },
+									React.createElement(
+											'div',
+											{ className: 'task-list-item', onClick: this.isPressed },
+											React.createElement(
+													'p',
+													null,
+													this.state.subject
+											),
+											React.createElement(
+													'p',
+													null,
+													'pomodoros: ',
+													this.props.task.pomodoros
+											)
+									)
+							);
+					}
+					return React.createElement(
+							'div',
+							{ className: 'task-list-padding' },
+							React.createElement(
+									'div',
+									{ className: 'task-list-item', onClick: this.isPressed },
+									React.createElement(
+											'p',
+											null,
+											this.state.subject
+									)
+							),
+							React.createElement('div', { className: 'overlay-back', onClick: this.isPressed }),
+							React.createElement(
+									'div',
+									{ className: 'edit-task' },
+									React.createElement(
+											'form',
+											{ className: 'task-edit-form', onSubmit: this.editTask },
+											React.createElement(
+													'h3',
+													{ className: 'edit-task-head' },
+													'Edit Task'
+											),
+											React.createElement('textarea', {
+													className: 'task-form-field',
+													type: 'text',
+													id: 'task_subject',
+													onChange: this.updateSubject,
+													value: this.state.subject
+											}),
+											React.createElement('br', null),
+											React.createElement('input', { type: 'number', step: '1', id: 'pomodoro-amount', onChange: this.updatePomos, value: this.state.pomodoros }),
+											React.createElement(
+													'button',
+													{ className: 'submit' },
+													'Save'
+											)
+									)
+							)
+					);
 			}
-			return React.createElement(
-				'div',
-				{ className: 'task-list-padding' },
-				React.createElement(
-					'div',
-					{ className: 'task-list-item', onClick: this.isPressed },
-					React.createElement(
-						'p',
-						null,
-						this.props.task.subject
-					)
-				),
-				React.createElement('div', { className: 'overlay-back', onClick: this.isPressed }),
-				React.createElement(
-					'div',
-					{ className: 'edit-task' },
-					React.createElement(
-						'form',
-						{ className: 'task-edit-form', onSubmit: this.editTask },
-						React.createElement(
-							'h3',
-							{ className: 'edit-task-head' },
-							'Edit Task'
-						),
-						React.createElement('textarea', {
-							className: 'task-form-field',
-							type: 'text',
-							id: 'task_subject',
-							valueLink: this.linkState("subject")
-						}),
-						React.createElement('br', null),
-						React.createElement(
-							'button',
-							{ className: 'submit' },
-							'Save'
-						)
-					)
-				)
-			);
-		}
 	});
 	
 	module.exports = TaskIndexItem;
@@ -21063,6 +21069,7 @@
 	};
 	
 	TaskStore.all = function () {
+	  debugger;
 	  var tasks = [];
 	  for (var id in _tasks) {
 	    if (_tasks.hasOwnProperty(id)) {
@@ -27606,29 +27613,25 @@
 	
 	var React = __webpack_require__(1);
 	var ApiUtil = __webpack_require__(169);
-	// var LinkedStateMixin = require('react-addons-linked-state-mixin');
 	
 	var TaskForm = React.createClass({
 	  displayName: 'TaskForm',
 	
-	  // contextTypes: {
-	  //     router: React.PropTypes.object.isRequired
-	  //   },
-	  // mixins: [LinkedStateMixin],
 	
 	  blankAttrs: {
-	    subject: '',
-	    card_id: ''
+	    subject: ''
 	  },
 	
 	  getInitialState: function getInitialState() {
-	    return this.blankAttrs;
+	    return { subject: event.target.value, pomodoros: 0 };
 	  },
 	
 	  createTask: function createTask(event) {
+	    debugger;
 	    event.preventDefault();
 	    var task = {};
 	    Object.keys(this.state).forEach(function (key) {
+	      debugger;
 	      {
 	        task[key] = this.state[key];
 	      }
@@ -27636,6 +27639,16 @@
 	    task.card_id = this.props.cardId;
 	    ApiUtil.createTask(task, this.props.boardId, this.props.cardId);
 	    this.setState(this.blankAttrs);
+	  },
+	
+	  updatePomos: function updatePomos(event) {
+	    debugger;
+	    this.setState({ pomodoros: event.target.value });
+	    debugger;
+	  },
+	
+	  updateSubject: function updateSubject(event) {
+	    this.setState({ subject: event.target.value });
 	  },
 	
 	  render: function render() {
@@ -27649,9 +27662,11 @@
 	          className: 'task-form-field',
 	          type: 'text',
 	          id: 'task_subject',
-	          valueLink: this.linkState("subject")
+	          onChange: this.updateSubject,
+	          value: this.state.subject
 	        }),
 	        React.createElement('br', null),
+	        React.createElement('input', { type: 'number', step: '1', id: 'pomodoro-amount', onChange: this.updatePomos, value: this.state.pomodoros }),
 	        React.createElement(
 	          'button',
 	          { className: 'submit' },
