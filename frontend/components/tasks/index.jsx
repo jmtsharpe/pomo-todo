@@ -36,10 +36,9 @@ var TaskIndex = React.createClass({
 		this.taskListener.remove();
 	},
 
-  render: function () {
+  	render: function () {
   		debugger
-  		if (this.state.tasks && this.state.tasks.length > 0 ) {
-  			debugger
+  		if (this.state.tasks.length > 0 ) {
   			var tasks = []
   			this.state.tasks.map(function (task) {
 				tasks.push(<li><TaskIndexItem  task={task} /></li>)

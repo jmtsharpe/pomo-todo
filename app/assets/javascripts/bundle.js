@@ -25943,8 +25943,7 @@
 	
 		render: function render() {
 			debugger;
-			if (this.state.tasks && this.state.tasks.length > 0) {
-				debugger;
+			if (this.state.tasks.length > 0) {
 				var tasks = [];
 				this.state.tasks.map(function (task) {
 					tasks.push(React.createElement(
@@ -26027,14 +26026,15 @@
 	    });
 	  },
 	
-	  deleteTask: function deleteTask(newTask, task) {
+	  deleteTask: function deleteTask(task) {
 	    $.ajax({
 	      url: "api/tasks/" + task.id,
 	      method: "DELETE",
-	      data: { task: newTask },
+	      data: { task: task },
 	      dataType: "json",
-	      success: function success(task) {
-	        TaskActions.receiveSingleTask(task);
+	      success: function success(tasks) {
+	        debugger;
+	        TaskActions.receiveAllTasks(tasks);
 	      }
 	    });
 	  }
@@ -33373,8 +33373,12 @@
 		displayName: 'Timer',
 	
 	
+		contextTypes: {
+			router: React.PropTypes.object.isRequired
+		},
+	
 		getInitialState: function getInitialState() {
-			return { minutes: 0, seconds: 5, paused: true, started: false };
+			return { minutes: 0, seconds: 5, paused: true, started: false, modal: false };
 		},
 	
 		startTime: function startTime() {
@@ -33397,7 +33401,6 @@
 				} else {
 					this.endTime();
 					this.removePomodoro();
-					this.setState({ minutes: 25, seconds: 0, paused: true, started: false });
 				};
 			};
 		},
@@ -33420,17 +33423,35 @@
 	
 		removePomodoro: function removePomodoro() {
 			var task = this.props.task;
-			console.log(task["pomodoros"]);
 			task["pomodoros"] = task["pomodoros"] - 1;
 			task.id = this.props.task.id;
 			if (task["pomodoros"] > 0) {
 				ApiUtil.editTask(task, this.props.task);
+				this.setState({ minutes: 25, seconds: 0, paused: true, started: false });
 			} else {
-				ApiUtil.editTask(task.id);
-			}
+				this.finishTask();
+			};
+		},
+	
+		addPomodoro: function addPomodoro() {
+			var task = this.props.task;
+			task["pomodoros"] = 1;
+			console.log(task);
+			ApiUtil.editTask(task, this.props.task);
+			this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false });
+		},
+	
+		deleteTask: function deleteTask() {
+			ApiUtil.deleteTask(this.props.task);
+			this.context.router.push('');
+		},
+	
+		finishTask: function finishTask() {
+			this.setState({ modal: true });
 		},
 	
 		render: function render() {
+	
 			if (!this.state.started) {
 				var button = React.createElement(
 					'button',
@@ -33453,6 +33474,25 @@
 	
 			var minutes = this.state.minutes;
 	
+			var modal = "";
+	
+			if (this.state.modal) {
+				modal = React.createElement(
+					'div',
+					{ className: 'finish-task-modal' },
+					React.createElement(
+						'button',
+						{ onClick: this.addPomodoro },
+						'Continue'
+					),
+					React.createElement(
+						'button',
+						{ onClick: this.deleteTask },
+						'Finish'
+					)
+				);
+			};
+	
 			if (this.state.seconds < 10) {
 				var seconds = "0" + this.state.seconds;
 			} else {
@@ -33471,7 +33511,8 @@
 					seconds,
 					' '
 				),
-				button
+				button,
+				modal
 			);
 		}
 	

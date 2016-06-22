@@ -3,8 +3,12 @@ const ApiUtil = require('./../../util/apiUtil');
 
 var Timer = React.createClass({
 
+	contextTypes: {
+      router: React.PropTypes.object.isRequired
+    },
+
 	getInitialState: function () {
-		return ({ minutes: 0, seconds: 5, paused: true, started: false })
+		return ({ minutes: 0, seconds: 5, paused: true, started: false, modal: false })
 	},
 
 	startTime: function () {
@@ -27,7 +31,6 @@ var Timer = React.createClass({
 			} else {
 				this.endTime();
 				this.removePomodoro();
-				this.setState({ minutes: 25, seconds: 0, paused: true, started: false });
 			};
 		};
 	},
@@ -50,18 +53,37 @@ var Timer = React.createClass({
 
 	removePomodoro: function () {
 	    var task = this.props.task;
-	    console.log(task["pomodoros"]);
 	    task["pomodoros"] = task["pomodoros"] - 1
 	    task.id = this.props.task.id;
 	    if (task["pomodoros"] > 0) {
 	    	ApiUtil.editTask(task, this.props.task);
+	    	this.setState({ minutes: 25, seconds: 0, paused: true, started: false });
 		} else {
-	    	ApiUtil.editTask(task.id);
-		}
+	    	this.finishTask();
+		};
+  	},
+
+  	addPomodoro: function () {
+  		var task = this.props.task;
+  		task["pomodoros"] = 1;
+  		console.log(task);
+	   	ApiUtil.editTask(task, this.props.task);
+	    this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false });
+
+  	},
+
+  	deleteTask: function () {
+  		ApiUtil.deleteTask(this.props.task);
+	    this.context.router.push('');
+  	},
+
+  	finishTask: function () {
+  		this.setState({modal: true})
   	},
 
 
 	render: function () {
+
 		if ( !this.state.started ) {
 			var button = <button onClick={this.startTime}>Start</button>
 		} else if ( this.state.paused ) {
@@ -71,6 +93,17 @@ var Timer = React.createClass({
 		};
 
 		var minutes = this.state.minutes;
+
+		var modal = ""
+
+		if (this.state.modal) {
+			modal = <div className="finish-task-modal">
+						<button onClick={this.addPomodoro}>Continue</button>
+						<button onClick={this.deleteTask}>Finish</button>
+					</div>
+		};
+
+
 
 		if (this.state.seconds < 10) {
 			var seconds = "0" + this.state.seconds;
@@ -83,6 +116,7 @@ var Timer = React.createClass({
 			<div>
 				<div> {minutes}:{seconds} </div>
 				{button}
+				{modal}
 			</div>
 		);
 		

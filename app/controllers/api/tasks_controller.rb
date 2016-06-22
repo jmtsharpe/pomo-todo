@@ -4,7 +4,6 @@ class Api::TasksController < ApplicationController
   end
 
   def create
-    debugger
     @task = Task.new(task_params)
     if @task.save
       render :show
@@ -39,6 +38,10 @@ class Api::TasksController < ApplicationController
   end
 
   def destroy
+    if Task.find(params[:id]).destroy
+      @tasks = Task.all
+      render :index
+    end
   end
 
   private

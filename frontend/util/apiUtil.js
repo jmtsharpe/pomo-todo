@@ -44,14 +44,15 @@ module.exports = {
     });
   },
 
-  deleteTask: function (newTask, task) {
+  deleteTask: function (task) {
     $.ajax({
       url: "api/tasks/" + task.id,
       method: "DELETE",
-      data: {task: newTask},
+      data: {task: task},
       dataType: "json",
-      success: function (task) {
-        TaskActions.receiveSingleTask(task);
+      success: function (tasks) {
+        debugger
+        TaskActions.receiveAllTasks(tasks);
       }
     });
   }  
