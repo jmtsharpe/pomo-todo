@@ -43,4 +43,17 @@ module.exports = {
       }
     });
   },
+
+  deleteTask: function (newTask, task) {
+    $.ajax({
+      url: "api/tasks/" + task.id,
+      method: "DELETE",
+      data: {task: newTask},
+      dataType: "json",
+      success: function (task) {
+        TaskActions.receiveSingleTask(task);
+      }
+    });
+  }  
+  
 };

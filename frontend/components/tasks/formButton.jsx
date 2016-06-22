@@ -1,5 +1,8 @@
 var React = require('react');
 var TaskForm = require('./form');
+
+const enhanceWithClickOutside = require('react-click-outside');
+
 // var OnClickOutside = require('react-onclickoutside');
 
 var TaskFormButton = React.createClass({
@@ -40,4 +43,4 @@ var TaskFormButton = React.createClass({
 
 });
 
-module.exports = TaskFormButton;
+module.exports = enhanceWithClickOutside(TaskFormButton);

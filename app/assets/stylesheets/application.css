@@ -20,8 +20,48 @@ button, article, footer, small {
 
 body {
 	background: #FF6347;
+	color: white;
 }
 
+/*/ task creation /*/
+
 .task-creation-button p {
-	color: blue;
+	background: red;
+
+	color: white;
+
+	padding: 10px;
+
+	margin: 10px;
+	
+	width: 200px;
+
+}
+
+.task-form-field {
+	background: white;
+	color: black;
+}
+
+.create-form {
+	background: red;
+
+	margin: 10px;
+
+	padding: 10px;
+
+	width: 200px;
+}
+
+/*/ task index item styling /*/
+
+.task-list-padding {
+
+	background: red;
+
+	padding: 10px;
+
+	margin: 10px;
+
+	width: 200px;
 }

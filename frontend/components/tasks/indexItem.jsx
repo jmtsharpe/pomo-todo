@@ -10,23 +10,30 @@ var TaskStore = require('./../../stores/task');
 
 var TaskIndexItem = React.createClass({
 
+	contextTypes: {
+      router: React.PropTypes.object.isRequired
+    },
 
 	getInitialState: function () {
 	    return {
-			pressed: false,
+			edit: false,
 			subject: this.props.task.subject,
 			pomodoros: this.props.task.pomodoros,
 			task: this.props.task
 		};
 	},
 
-    isPressed: function () {
-		this.setState({pressed: !this.state.pressed});
+    openEdit: function () {
+		this.setState({ edit: true });
 	},
 
 	handleClickOutside: function (e) {
-    	this.setState({ pressed: false});
+    	this.setState({ edit: false});
 	},
+
+	showDetail: function () {
+      this.context.router.push('tasks/' + this.props.task.id);
+    },
 
 	editTask: function (event) {
 
@@ -40,11 +47,11 @@ var TaskIndexItem = React.createClass({
 	    this.setState({ pressed: false } );
   	},
 
-  	 updatePomos: function (event) {
-    debugger
-    this.setState({ pomodoros: event.target.value})
-    debugger
-  },
+  	updatePomos: function (event) {
+    
+    	this.setState({ pomodoros: event.target.value})
+   
+  	},
 
   updateSubject: function (event) {
     this.setState({ subject: event.target.value})
@@ -54,12 +61,14 @@ var TaskIndexItem = React.createClass({
 
 
 
-		if (!this.state.pressed) {
+		if (!this.state.edit) {
 			return (
 				<div className="task-list-padding">
-					<div className="task-list-item" onClick={this.isPressed}>
+					<div className="task-list-item" >
 						<p>{this.state.subject}</p>
 						<p>pomodoros: {this.props.task.pomodoros}</p>
+						<button className="task-edit-button" onClick={this.openEdit}>Edit</button>
+						<button className="start-button" onClick={this.showDetail}>Start</button>
 					</div>
 				</div>
 			);
