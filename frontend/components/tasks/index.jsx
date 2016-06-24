@@ -37,16 +37,15 @@ var TaskIndex = React.createClass({
 	},
 
   	render: function () {
-  		debugger
   		if (this.state.tasks.length > 0 ) {
   			var tasks = []
   			this.state.tasks.map(function (task) {
-				tasks.push(<li><TaskIndexItem  task={task} /></li>)
+				tasks.push(<li className="task-list-item-container"><TaskIndexItem  task={task} /></li>)
 				
 			});
   		}; 
 		return ( 
-			<li className="task-index-container" >
+			<li className="task-index-container group" >
 				<div className="task-index" >
 					<ul>
 						{tasks}

@@ -28,13 +28,14 @@ var ShowTask = React.createClass({
   	},
 
 	render: function () {
-		debugger
 		if (this.state.task) {
 			return (
-				<div className="task-sidebar">
-					<div>{this.state.task.subject}</div>
-					<div>{this.state.task.pomodoros}</div>
-					<Timer task={this.state.task} />
+				<div className="task-container group">
+					<div className="task-sidebar">
+						<div>{this.state.task.subject}</div>
+						<div>{this.state.task.pomodoros}</div>
+					</div>
+						<Timer task={this.state.task} />
 				</div>
 
 			);

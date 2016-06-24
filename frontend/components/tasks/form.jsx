@@ -12,11 +12,9 @@ var TaskForm = React.createClass({
   },
 
   createTask: function (event) {
-    debugger
     event.preventDefault();
     var task = {};
     Object.keys(this.state).forEach(function (key) {
-      debugger
       { task[key] = this.state[key]; }
     }.bind(this));
     task.card_id = this.props.cardId;
@@ -25,9 +23,7 @@ var TaskForm = React.createClass({
   },
 
   updatePomos: function (event) {
-    debugger
     this.setState({ pomodoros: event.target.value})
-    debugger
   },
 
   updateSubject: function (event) {

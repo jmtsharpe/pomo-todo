@@ -25942,20 +25942,19 @@
 		},
 	
 		render: function render() {
-			debugger;
 			if (this.state.tasks.length > 0) {
 				var tasks = [];
 				this.state.tasks.map(function (task) {
 					tasks.push(React.createElement(
 						'li',
-						null,
+						{ className: 'task-list-item-container' },
 						React.createElement(TaskIndexItem, { task: task })
 					));
 				});
 			};
 			return React.createElement(
 				'li',
-				{ className: 'task-index-container' },
+				{ className: 'task-index-container group' },
 				React.createElement(
 					'div',
 					{ className: 'task-index' },
@@ -25985,14 +25984,13 @@
 	module.exports = {
 	
 	  fetchAllTasks: function fetchAllTasks() {
-	    debugger;
 	
 	    $.ajax({
 	      url: "api/tasks",
 	      method: "GET",
 	      dataType: "json",
 	      success: function success(tasks) {
-	        debugger;
+	
 	        TaskActions.receiveAllTasks(tasks);
 	      },
 	      error: function error(tasks) {
@@ -26002,7 +26000,7 @@
 	  },
 	
 	  createTask: function createTask(task, board_id, card_id) {
-	    debugger;
+	
 	    $.ajax({
 	      url: "api/tasks",
 	      method: "POST",
@@ -26033,7 +26031,7 @@
 	      data: { task: task },
 	      dataType: "json",
 	      success: function success(tasks) {
-	        debugger;
+	
 	        TaskActions.receiveAllTasks(tasks);
 	      }
 	    });
@@ -26471,24 +26469,28 @@
 						'div',
 						{ className: 'task-list-item' },
 						React.createElement(
-							'p',
-							null,
-							this.state.subject
-						),
-						React.createElement(
-							'p',
-							null,
-							'pomodoros: ',
-							this.props.task.pomodoros
+							'ul',
+							{ className: 'index-item-props group' },
+							React.createElement(
+								'li',
+								{ className: 'index-item-subject' },
+								this.state.subject
+							),
+							React.createElement(
+								'li',
+								{ className: 'index-item-pomodoros' },
+								'pomodoros: ',
+								this.props.task.pomodoros
+							)
 						),
 						React.createElement(
 							'button',
-							{ className: 'task-edit-button', onClick: this.openEdit },
+							{ className: 'task-button', onClick: this.openEdit },
 							'Edit'
 						),
 						React.createElement(
 							'button',
-							{ className: 'start-button', onClick: this.showDetail },
+							{ className: 'task-button', onClick: this.showDetail },
 							'Start'
 						)
 					)
@@ -26681,7 +26683,6 @@
 	};
 	
 	TaskStore.all = function () {
-	  debugger;
 	  var tasks = [];
 	  for (var id in _tasks) {
 	    if (_tasks.hasOwnProperty(id)) {
@@ -33171,19 +33172,24 @@
 
 	'use strict';
 	
+	var _React$createClass;
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	var React = __webpack_require__(1);
 	var TaskForm = __webpack_require__(259);
+	var ApiUtil = __webpack_require__(230);
 	
 	var enhanceWithClickOutside = __webpack_require__(239);
 	
 	// var OnClickOutside = require('react-onclickoutside');
 	
-	var TaskFormButton = React.createClass({
+	var TaskFormButton = React.createClass((_React$createClass = {
 	  displayName: 'TaskFormButton',
 	
 	  // mixins: [OnClickOutside],
 	  getInitialState: function getInitialState() {
-	    return { pressed: false };
+	    return { pressed: false, subject: event.target.value, pomodoros: null };
 	  },
 	
 	  isPressed: function isPressed() {
@@ -33192,31 +33198,78 @@
 	
 	  handleClickOutside: function handleClickOutside(e) {
 	    this.setState({ pressed: false });
-	  },
-	
-	  render: function render() {
-	    if (!this.state.pressed) {
-	      return React.createElement(
-	        'div',
-	        { className: 'task-creation-button', onClick: this.isPressed },
-	        React.createElement(
-	          'p',
-	          null,
-	          'Add a task..'
-	        )
-	      );
-	    }
-	    return React.createElement(
-	      'div',
-	      { className: 'task-creation-div', onClick: this.isPressed },
-	      React.createElement(TaskForm, {
-	        boardId: this.props.boardId,
-	        cardId: this.props.cardId
-	      })
-	    );
 	  }
 	
-	});
+	}, _defineProperty(_React$createClass, 'getInitialState', function getInitialState() {
+	  return { subject: event.target.value, pomodoros: 0 };
+	}), _defineProperty(_React$createClass, 'createTask', function createTask(event) {
+	  event.preventDefault();
+	  var task = {};
+	  Object.keys(this.state).forEach(function (key) {
+	    {
+	      task[key] = this.state[key];
+	    }
+	  }.bind(this));
+	  task.card_id = this.props.cardId;
+	  ApiUtil.createTask(task, this.props.boardId, this.props.cardId);
+	  this.setState(this.blankAttrs);
+	  this.setState({ pressed: false, subject: "" });
+	}), _defineProperty(_React$createClass, 'updatePomos', function updatePomos(event) {
+	  this.setState({ pomodoros: event.target.value });
+	}), _defineProperty(_React$createClass, 'updateSubject', function updateSubject(event) {
+	  this.setState({ subject: event.target.value });
+	}), _defineProperty(_React$createClass, 'render', function render() {
+	  if (!this.state.pressed) {
+	    return React.createElement(
+	      'div',
+	      { className: 'task-creation-button', onClick: this.isPressed },
+	      React.createElement(
+	        'p',
+	        null,
+	        'Add a task..'
+	      )
+	    );
+	  }
+	  return React.createElement(
+	    'div',
+	    { className: 'create-form', onClick: this.isPressed },
+	    React.createElement(
+	      'form',
+	      { className: 'new-task', onSubmit: this.createTask },
+	      React.createElement(
+	        'h1',
+	        null,
+	        'What is your task?'
+	      ),
+	      React.createElement('textarea', {
+	        className: 'task-form-field',
+	        type: 'text',
+	        id: 'task_subject',
+	        onChange: this.updateSubject,
+	        value: this.state.subject
+	      }),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'h1',
+	        null,
+	        'How many pomodoros will it take?'
+	      ),
+	      React.createElement('input', {
+	        className: 'pomo-number',
+	        type: 'number',
+	        step: '1',
+	        id: 'pomodoro-amount',
+	        onChange: this.updatePomos,
+	        value: this.state.pomodoros }),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'button',
+	        { className: 'submit' },
+	        'Save'
+	      )
+	    )
+	  );
+	}), _React$createClass));
 	
 	module.exports = enhanceWithClickOutside(TaskFormButton);
 
@@ -33242,11 +33295,9 @@
 	  },
 	
 	  createTask: function createTask(event) {
-	    debugger;
 	    event.preventDefault();
 	    var task = {};
 	    Object.keys(this.state).forEach(function (key) {
-	      debugger;
 	      {
 	        task[key] = this.state[key];
 	      }
@@ -33257,9 +33308,7 @@
 	  },
 	
 	  updatePomos: function updatePomos(event) {
-	    debugger;
 	    this.setState({ pomodoros: event.target.value });
-	    debugger;
 	  },
 	
 	  updateSubject: function updateSubject(event) {
@@ -33332,20 +33381,23 @@
 		},
 	
 		render: function render() {
-			debugger;
 			if (this.state.task) {
 				return React.createElement(
 					'div',
-					{ className: 'task-sidebar' },
+					{ className: 'task-container group' },
 					React.createElement(
 						'div',
-						null,
-						this.state.task.subject
-					),
-					React.createElement(
-						'div',
-						null,
-						this.state.task.pomodoros
+						{ className: 'task-sidebar' },
+						React.createElement(
+							'div',
+							null,
+							this.state.task.subject
+						),
+						React.createElement(
+							'div',
+							null,
+							this.state.task.pomodoros
+						)
 					),
 					React.createElement(Timer, { task: this.state.task })
 				);
@@ -33378,7 +33430,7 @@
 		},
 	
 		getInitialState: function getInitialState() {
-			return { minutes: 0, seconds: 5, paused: true, started: false, modal: false };
+			return { minutes: 0, seconds: 30, paused: true, started: false, modal: false, progress: 1500, dial: -45 };
 		},
 	
 		startTime: function startTime() {
@@ -33392,11 +33444,20 @@
 			if (this.state.paused == false) {
 				if (this.state.seconds > 0) {
 					var seconds = this.state.seconds - 1;
-					this.setState({ seconds: seconds });
+					var progress = this.state.minutes * 60 + seconds;
+					var dial = 360 / 1500 * (1500 - progress) - 45;
+					this.setState({ seconds: seconds, progress: progress, dial: dial });
 				} else if (this.state.minutes > 0) {
 					var seconds = 59;
 					var minutes = this.state.minutes - 1;
-					this.setState({ minutes: minutes });
+					var progress = minutes * 60 + seconds;
+					var dial = 360 / 1500 * (1500 - progress) - 45;
+					this.setState({
+						minutes: minutes,
+						seconds: seconds,
+						progress: progress,
+						dial: dial
+					});
 					this.setState({ seconds: seconds });
 				} else {
 					this.endTime();
@@ -33423,22 +33484,18 @@
 	
 		removePomodoro: function removePomodoro() {
 			var task = this.props.task;
-			task["pomodoros"] = task["pomodoros"] - 1;
-			task.id = this.props.task.id;
-			if (task["pomodoros"] > 0) {
+	
+			if (task["pomodoros"] > 1) {
+				task["pomodoros"] = task["pomodoros"] - 1;
 				ApiUtil.editTask(task, this.props.task);
-				this.setState({ minutes: 25, seconds: 0, paused: true, started: false });
+				this.setState({ minutes: 25, seconds: 0, paused: true, started: false, dial: -45 });
 			} else {
 				this.finishTask();
 			};
 		},
 	
 		addPomodoro: function addPomodoro() {
-			var task = this.props.task;
-			task["pomodoros"] = 1;
-			console.log(task);
-			ApiUtil.editTask(task, this.props.task);
-			this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false });
+			this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false, dial: -45 });
 		},
 	
 		deleteTask: function deleteTask() {
@@ -33455,24 +33512,22 @@
 			if (!this.state.started) {
 				var button = React.createElement(
 					'button',
-					{ onClick: this.startTime },
+					{ className: 'clock-multi-button', onClick: this.startTime },
 					'Start'
 				);
 			} else if (this.state.paused) {
 				var button = React.createElement(
 					'button',
-					{ onClick: this.continueTime },
+					{ className: 'clock-multi-button', onClick: this.continueTime },
 					'Continue'
 				);
 			} else {
 				var button = React.createElement(
 					'button',
-					{ onClick: this.pauseTime },
+					{ className: 'clock-multi-button', onClick: this.pauseTime },
 					'Pause'
 				);
 			};
-	
-			var minutes = this.state.minutes;
 	
 			var modal = "";
 	
@@ -33481,16 +33536,26 @@
 					'div',
 					{ className: 'finish-task-modal' },
 					React.createElement(
-						'button',
-						{ onClick: this.addPomodoro },
-						'Continue'
-					),
-					React.createElement(
-						'button',
-						{ onClick: this.deleteTask },
-						'Finish'
+						'div',
+						{ className: 'clock-end-buttons-container' },
+						React.createElement(
+							'button',
+							{ className: 'clock-end-buttons', onClick: this.addPomodoro },
+							'Continue'
+						),
+						React.createElement(
+							'button',
+							{ className: 'clock-end-buttons', onClick: this.deleteTask },
+							'Finish'
+						)
 					)
 				);
+			};
+	
+			if (this.state.minutes < 10) {
+				var minutes = "0" + this.state.minutes;
+			} else {
+				var minutes = this.state.minutes;
 			};
 	
 			if (this.state.seconds < 10) {
@@ -33499,17 +33564,64 @@
 				var seconds = this.state.seconds;
 			};
 	
+			var progress = this.state.progress;
+	
+			if (this.state.progress < 375) {
+				var progressBarCover = {
+					borderTop: '10px solid transparent',
+					borderRight: '10px solid white',
+					borderLeft: '10px solid white',
+					borderBottom: '10px solid white'
+				};
+			} else if (this.state.progress < 750) {
+				var progressBarCover = {
+					borderTop: '10px solid transparent',
+					borderRight: '10px solid white',
+					borderBottom: '10px solid white'
+				};
+			} else if (this.state.progress < 1125) {
+				var progressBarCover = {
+					borderTop: '10px solid transparent',
+					borderRight: '10px solid white'
+				};
+			};
+	
+			var rotater = {
+				transform: 'rotate(' + this.state.dial + 'deg)'
+			};
+	
+			console.log(this.state);
+	
 			return React.createElement(
 				'div',
-				null,
+				{ className: 'pomodoro-container' },
 				React.createElement(
 					'div',
-					null,
-					' ',
+					{ className: 'pomodoro' },
+					this.props.task.pomodoros,
+					React.createElement(
+						'div',
+						{ className: 'leaves' },
+						React.createElement('div', { className: 'leaf-1' }),
+						React.createElement('div', { className: 'leaf-2' }),
+						React.createElement('div', { className: 'leaf-3' }),
+						React.createElement('div', { className: 'leaf-4' }),
+						React.createElement('div', { className: 'leaf-5' })
+					)
+				),
+				React.createElement(
+					'div',
+					{ className: 'clock' },
 					minutes,
 					':',
 					seconds,
-					' '
+					React.createElement(
+						'div',
+						{ className: 'progress-bar' },
+						React.createElement('div', { className: 'progress-bar-cover', style: progressBarCover }),
+						React.createElement('div', { className: 'progress-bar-1', style: rotater }),
+						React.createElement('div', { className: 'progress-blank' })
+					)
 				),
 				button,
 				modal
@@ -33550,7 +33662,6 @@
 	
 	  render: function render() {
 	
-	    debugger;
 	    return React.createElement(
 	      'div',
 	      null,
@@ -33567,8 +33678,8 @@
 	          )
 	        )
 	      ),
-	      React.createElement(TaskIndex, null),
-	      this.props.children
+	      this.props.children,
+	      React.createElement(TaskIndex, null)
 	    );
 	  }
 	});

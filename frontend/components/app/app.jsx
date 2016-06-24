@@ -26,7 +26,6 @@ var App = React.createClass({
 
   render: function () {
 
-  	debugger
     return (
       <div>
         <header className="over-head group">
@@ -38,8 +37,8 @@ var App = React.createClass({
             </div>
           </nav>
         </header>
-        <TaskIndex />
         {this.props.children}
+        <TaskIndex />
       </div>
     );
   }
