@@ -2,6 +2,7 @@ const React = require('react');
 const ApiUtil = require('./../../util/apiUtil');
 var TaskStore = require('./../../stores/task.js');
 var Timer = require('./../pomodoro/timer.jsx');
+var SessionStore = require('./../../stores/session.js');
 
 var ShowTask = React.createClass({
 	getInitialState: function () {
@@ -9,6 +10,7 @@ var ShowTask = React.createClass({
   	},
 
   	_onChange: function () {
+  		debugger
     	this.setState({
       		task: TaskStore.find(this.props.params.id)
     	});
@@ -19,8 +21,8 @@ var ShowTask = React.createClass({
 	},
 
   	componentDidMount: function () {
+  		debugger
 		this.taskListener = TaskStore.addListener(this._onChange);
-    	ApiUtil.fetchAllTasks(this.props.params.id);
   	},
 
   	componentWillUnmount: function () {
@@ -28,13 +30,11 @@ var ShowTask = React.createClass({
   	},
 
 	render: function () {
+		debugger
 		if (this.state.task) {
 			return (
 				<div className="task-container group">
-					<div className="task-sidebar">
-						<div>{this.state.task.subject}</div>
-						<div>{this.state.task.pomodoros}</div>
-					</div>
+					
 						<Timer task={this.state.task} />
 				</div>
 

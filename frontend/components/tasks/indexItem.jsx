@@ -1,5 +1,6 @@
 var React = require('react');
 var TaskEditForm = require('./editForm');
+var SessionStore = require('./../../stores/session.js');
 
 const enhanceWithClickOutside = require('react-click-outside');
 
@@ -53,9 +54,15 @@ var TaskIndexItem = React.createClass({
    
   	},
 
-  updateSubject: function (event) {
-    this.setState({ subject: event.target.value})
-  },
+  	updateSubject: function (event) {
+    	this.setState({ subject: event.target.value})
+  	},
+
+  	deleteTask: function () {
+  		var user = SessionStore.currentUser();
+  		ApiUtil.deleteTask(this.props.task, user);
+	    this.context.router.push('');
+  	},
 
   render: function () {
 
@@ -65,6 +72,7 @@ var TaskIndexItem = React.createClass({
 			return (
 				<div className="task-list-padding">
 					<div className="task-list-item" >
+						<button onClick={this.deleteTask}>x</button>
 						<ul className="index-item-props group">
 							<li className="index-item-subject">{this.state.subject}</li>
 							<li className="index-item-pomodoros">pomodoros: {this.props.task.pomodoros}</li>

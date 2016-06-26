@@ -25,24 +25,43 @@ body {
 	font-family: sans-serif;
 }
 
+button:hover {
+	cursor: pointer;
+}
+
+.main {
+	max-width: 900px;
+	margin: auto;
+	text-align: center;
+}
+
 /*/ /*/ /*/ ----header---- /*/ /*/ /*/
+
+.nav-bar {
+	max-width: 900px;
+	margin: auto;
+}
 
 .over-head {
 	padding: 20px;
 	text-align: center;
+	width: 100%;
 
 	background: #E34819;
 	font-size: 20px;
 	margin-bottom: 20px;
 }
 
+.over-head-logo {
+	margin: auto;
+	width: 200px;
+}
 /*/ /*/ /*/ ----task index---- /*/ /*/ /*/
 
 .task-index-container {
 	margin: auto;
-	margin-left: 100px;
 	text-align: center;
-	float: left;
+	display: inline-block;
 	max-width: 600px;
 }
 
@@ -61,7 +80,7 @@ body {
 
 	margin: 10px;
 
-	box-shadow: 0px 5px 5px #555555;
+	box-shadow: 0px 2px 2px #555555;
 
 }
 
@@ -80,6 +99,7 @@ body {
 	padding: 10px;
 	margin: 10px;
 	background: #D6CFC9;
+	border-radius: 3px;
 }
 
 .index-item-props {
@@ -106,7 +126,8 @@ body {
 	
 	width: 360px;
 
-	box-shadow: 0px 5px 5px #555555;
+	box-shadow: 0px 2px 2px #555555;
+	border-radius: 3px;
 
 }
 
@@ -125,14 +146,15 @@ body {
 }
 
 .create-form {
-	background: red;
+	background: #E34819;
 	margin: auto;
 	margin-top: 20px;
 
 	padding: 10px;
 
 	width: 360px;
-	box-shadow: 0px 5px 5px #555555;
+	box-shadow: 0px 2px 2px #555555;
+
 }
 
 .create-form h1 {
@@ -159,11 +181,16 @@ body {
 /*/ /*/ /*/ ----timer---- /*/ /*/ /*/
 
 .pomodoro-container {
-	float: right;
-	margin: auto;
 	position: relative;
-	margin-right: 150px;
-	margin-left: 150px;
+	margin: auto;
+	max-width: 400px;
+}
+
+.pomodoro-count {
+	position: absolute;
+	left: 17px;
+	top: -15px;
+	float: left;
 }
 
 .pomodoro {
@@ -175,7 +202,7 @@ body {
 	padding: 5px;
 	margin: auto;
 
-	left: 170px;
+	right: 200px;
 	top: 150px;
 	font-size: 40px;
 	box-shadow: 0px 2px 2px darkred;
@@ -200,7 +227,7 @@ body {
 
 .leaf-2 {
 	position: absolute;
-	right: -5px;
+	right: -3px;
 	top: -2px;
 	transform: rotate(50deg);
 	z-index: 2;
@@ -228,7 +255,7 @@ body {
 .leaf-4 {
 	position: absolute;
 	right:1px;
-	top: 0px;
+	top: 4px;
 	transform: rotate(210deg);
 	z-index: 2;
 	width: 0;
@@ -240,7 +267,7 @@ body {
 
 .leaf-5 {
 	position: absolute;
-	right: 1px;
+	right: 2px;
 	top: -1px;
 	transform: rotate(-75deg);
 	z-index: 2;
@@ -262,7 +289,8 @@ body {
 	margin: auto;
 
 	font-size: 40px;
-	box-shadow: 0px 5px 5px #555555;
+	box-shadow: 0px 2px 2px #555555;
+	box-shadow: inset 0px 2px 2px #555555;
 }
 
 .clock-multi-button {
@@ -273,7 +301,7 @@ body {
 	margin: auto;
 	margin-top: 10px;
 	border-radius: 3px;
-	box-shadow: 0px 5px 5px #555555;
+	box-shadow: 0px 2px 2px #555555;
 }
 
 /*/ /*/ /*/ finish modal /*/ /*/ /*/
@@ -321,7 +349,7 @@ body {
 	z-index: 10;
 	position: absolute;
 	top: -10px;
-	left: -10px;
+	left: -9px;
 	width: 200px;
 	height: 200px;
 	background: transparent;
@@ -341,7 +369,7 @@ body {
 	z-index: 1;
 	position: absolute;
 	top: -10px;
-	left: -10px;
+	left: -9px;
 	width: 200px;
 	height: 200px;
 	background: transparent;
@@ -353,6 +381,7 @@ body {
 	border-bottom: 10px solid transparent;
 	padding: 50px;
 	margin: auto;
+	box-shadow: 0px 2px 2px #555555;
 
 	transform: rotate(-45deg);
 
@@ -363,7 +392,7 @@ body {
 	z-index: 0;
 	position: absolute;
 	top: -10px;
-	left: -10px;
+	left: -9px;
 	width: 200px;
 	height: 200px;
 	background: transparent;
@@ -376,7 +405,6 @@ body {
 	padding: 50px;
 	margin: auto;
 
-	transform: rotate(-44deg);
 }
 
 

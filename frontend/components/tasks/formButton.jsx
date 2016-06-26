@@ -1,6 +1,8 @@
 var React = require('react');
 var TaskForm = require('./form');
 var ApiUtil = require('../../util/apiUtil');
+var SessionStore = require('./../../stores/session.js');
+
 
 
 const enhanceWithClickOutside = require('react-click-outside');
@@ -28,12 +30,10 @@ var TaskFormButton = React.createClass({
   createTask: function (event) {
     event.preventDefault();
     var task = {};
-    Object.keys(this.state).forEach(function (key) {
-      { task[key] = this.state[key]; }
-    }.bind(this));
-    task.card_id = this.props.cardId;
-    ApiUtil.createTask(task, this.props.boardId, this.props.cardId);
-    this.setState(this.blankAttrs);
+    task.subject = this.state.subject;
+    task.pomodoros = this.state.pomodoros;
+    task.user_id = SessionStore.currentUser().id;    
+    ApiUtil.createTask(task);
     this.setState({ pressed: false, subject: "" });
   },
 
@@ -51,9 +51,9 @@ var TaskFormButton = React.createClass({
   render: function () {
   		if (!this.state.pressed) {
   			return(
-          <div className="task-creation-button" onClick={this.isPressed}>
+          <button className="task-creation-button" onClick={this.isPressed}>
     				<p>Add a task..</p>
-          </div>
+          </button>
   			);
   		}
       return(

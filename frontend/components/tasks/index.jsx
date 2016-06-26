@@ -7,6 +7,8 @@ var TaskIndexItem = require('./../tasks/indexItem');
 var TaskFormButton = require('./../tasks/formButton');
 
 var TaskStore = require('./../../stores/task');
+var SessionStore = require('./../../stores/session.js');
+
 
 var TaskIndex = React.createClass({
 
@@ -24,7 +26,8 @@ var TaskIndex = React.createClass({
 
 	componentDidMount: function () {
 		this.taskListener = TaskStore.addListener(this._onChange);
-		ApiUtil.fetchAllTasks();
+		var user = SessionStore.currentUser();
+		ApiUtil.fetchAllTasks(user.id);
 	},
 
 	_onChange: function () {

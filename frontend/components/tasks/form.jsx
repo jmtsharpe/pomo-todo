@@ -1,5 +1,6 @@
 var React = require('react');
 var ApiUtil = require('../../util/apiUtil');
+var SessionStore = require('./../../stores/session.js');
 
 var TaskForm = React.createClass({
 

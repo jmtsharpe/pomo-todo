@@ -52,6 +52,7 @@
 	var Router = __webpack_require__(168).Router;
 	var Route = __webpack_require__(168).Route;
 	var IndexRoute = __webpack_require__(168).IndexRoute;
+	var ApiUtil = __webpack_require__(230);
 	var hashHistory = __webpack_require__(168).hashHistory;
 	
 	var TaskIndex = __webpack_require__(229);
@@ -59,18 +60,16 @@
 	var TaskShow = __webpack_require__(260);
 	var App = __webpack_require__(262);
 	
-	// var MyComponent = React.createClass({
-	//   render() {
-	//     return(
-	//       <div>I'm ALIVE!</div>
-	//     );
-	//   }
-	// });
+	var LoginForm = __webpack_require__(263);
+	var SignUpForm = __webpack_require__(264);
+	var Welcome = __webpack_require__(265);
+	
+	var SessionStore = __webpack_require__(266);
 	
 	var routes = React.createElement(
 	  Route,
-	  { path: '/', component: App },
-	  React.createElement(Route, { path: 'tasks/:id', component: TaskShow })
+	  { path: '/', component: App, onEnter: _requireLoggedIn },
+	  React.createElement(Route, { path: 'tasks/:id', component: TaskShow, onEnter: _requireLoggedIn })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -80,10 +79,30 @@
 	    React.createElement(
 	      Router,
 	      { history: hashHistory },
-	      routes
+	      routes,
+	      React.createElement(Route, { path: '/welcome', component: Welcome }),
+	      React.createElement(Route, { path: '/login', component: LoginForm }),
+	      React.createElement(Route, { path: '/signup', component: SignUpForm })
 	    )
 	  ), document.getElementById('root'));
 	});
+	
+	function _requireLoggedIn(nextState, replace, asyncCompletionCallback) {
+	  debugger;
+	  if (!SessionStore.currentUserHasBeenFetched()) {
+	    ApiUtil.fetchCurrentUser(_redirectIfNotLoggedIn);
+	  } else {
+	    _redirectIfNotLoggedIn();
+	  }
+	
+	  function _redirectIfNotLoggedIn() {
+	    if (!SessionStore.isLoggedIn()) {
+	      replace("/welcome");
+	    }
+	
+	    asyncCompletionCallback();
+	  }
+	}
 
 /***/ },
 /* 1 */
@@ -25910,6 +25929,7 @@
 	var TaskFormButton = __webpack_require__(258);
 	
 	var TaskStore = __webpack_require__(240);
+	var SessionStore = __webpack_require__(266);
 	
 	var TaskIndex = React.createClass({
 		displayName: 'TaskIndex',
@@ -25929,7 +25949,8 @@
 	
 		componentDidMount: function componentDidMount() {
 			this.taskListener = TaskStore.addListener(this._onChange);
-			ApiUtil.fetchAllTasks();
+			var user = SessionStore.currentUser();
+			ApiUtil.fetchAllTasks(user.id);
 		},
 	
 		_onChange: function _onChange() {
@@ -25977,19 +25998,23 @@
 /* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	var TaskActions = __webpack_require__(231);
+	var SessionActions = __webpack_require__(268);
 	
 	module.exports = {
 	
-	  fetchAllTasks: function fetchAllTasks() {
+	  fetchAllTasks: function fetchAllTasks(userId) {
 	
+	    debugger;
 	    $.ajax({
 	      url: "api/tasks",
 	      method: "GET",
 	      dataType: "json",
+	      data: { userId: userId },
 	      success: function success(tasks) {
+	        debugger;
 	
 	        TaskActions.receiveAllTasks(tasks);
 	      },
@@ -25999,7 +26024,7 @@
 	    });
 	  },
 	
-	  createTask: function createTask(task, board_id, card_id) {
+	  createTask: function createTask(task) {
 	
 	    $.ajax({
 	      url: "api/tasks",
@@ -26024,15 +26049,70 @@
 	    });
 	  },
 	
-	  deleteTask: function deleteTask(task) {
+	  deleteTask: function deleteTask(task, user) {
+	    debugger;
 	    $.ajax({
 	      url: "api/tasks/" + task.id,
 	      method: "DELETE",
-	      data: { task: task },
+	      data: { task: task, userId: user.id },
 	      dataType: "json",
 	      success: function success(tasks) {
 	
 	        TaskActions.receiveAllTasks(tasks);
+	      }
+	    });
+	  },
+	
+	  signUp: function signUp(credentials, callback) {
+	    $.ajax({
+	      type: "POST",
+	      url: "/api/users",
+	      dataType: "json",
+	      data: { user: credentials },
+	      success: function success(currentUser) {
+	        SessionActions.currentUserReceived(currentUser);
+	        callback && callback();
+	      }
+	    });
+	  },
+	
+	  login: function login(credentials, callback) {
+	    debugger;
+	    $.ajax({
+	      type: "POST",
+	      url: "/api/session",
+	      dataType: "json",
+	      data: credentials,
+	      success: function success(currentUser) {
+	        debugger;
+	        SessionActions.currentUserReceived(currentUser);
+	        callback && callback();
+	      }
+	    });
+	  },
+	
+	  logout: function logout(callback) {
+	    $.ajax({
+	      type: "DELETE",
+	      url: "/api/session",
+	      dataType: "json",
+	      success: function success() {
+	        SessionActions.logout();
+	        callback && callback();
+	      }
+	    });
+	  },
+	
+	  fetchCurrentUser: function fetchCurrentUser(completion) {
+	    $.ajax({
+	      type: "GET",
+	      url: "/api/session",
+	      dataType: "json",
+	      success: function success(currentUser) {
+	        SessionActions.currentUserReceived(currentUser);
+	      },
+	      complete: function complete() {
+	        completion && completion();
 	      }
 	    });
 	  }
@@ -26400,6 +26480,7 @@
 	
 	var React = __webpack_require__(1);
 	var TaskEditForm = __webpack_require__(238);
+	var SessionStore = __webpack_require__(266);
 	
 	var enhanceWithClickOutside = __webpack_require__(239);
 	
@@ -26459,6 +26540,12 @@
 			this.setState({ subject: event.target.value });
 		},
 	
+		deleteTask: function deleteTask() {
+			var user = SessionStore.currentUser();
+			ApiUtil.deleteTask(this.props.task, user);
+			this.context.router.push('');
+		},
+	
 		render: function render() {
 	
 			if (!this.state.edit) {
@@ -26468,6 +26555,11 @@
 					React.createElement(
 						'div',
 						{ className: 'task-list-item' },
+						React.createElement(
+							'button',
+							{ onClick: this.deleteTask },
+							'x'
+						),
 						React.createElement(
 							'ul',
 							{ className: 'index-item-props group' },
@@ -26550,16 +26642,10 @@
 	
 	var React = __webpack_require__(1);
 	var ApiUtil = __webpack_require__(230);
-	// var LinkedStateMixin = require('react-addons-linked-state-mixin');
-	// var App = require('./../app/app');
 	
 	var EditTaskForm = React.createClass({
 	  displayName: 'EditTaskForm',
 	
-	  // contextTypes: {
-	  //     router: React.PropTypes.object.isRequired
-	  //   },
-	  // mixins: [LinkedStateMixin],
 	
 	  blankAttrs: {
 	    subject: ''
@@ -26683,6 +26769,7 @@
 	};
 	
 	TaskStore.all = function () {
+	  debugger;
 	  var tasks = [];
 	  for (var id in _tasks) {
 	    if (_tasks.hasOwnProperty(id)) {
@@ -33179,6 +33266,7 @@
 	var React = __webpack_require__(1);
 	var TaskForm = __webpack_require__(259);
 	var ApiUtil = __webpack_require__(230);
+	var SessionStore = __webpack_require__(266);
 	
 	var enhanceWithClickOutside = __webpack_require__(239);
 	
@@ -33205,14 +33293,10 @@
 	}), _defineProperty(_React$createClass, 'createTask', function createTask(event) {
 	  event.preventDefault();
 	  var task = {};
-	  Object.keys(this.state).forEach(function (key) {
-	    {
-	      task[key] = this.state[key];
-	    }
-	  }.bind(this));
-	  task.card_id = this.props.cardId;
-	  ApiUtil.createTask(task, this.props.boardId, this.props.cardId);
-	  this.setState(this.blankAttrs);
+	  task.subject = this.state.subject;
+	  task.pomodoros = this.state.pomodoros;
+	  task.user_id = SessionStore.currentUser().id;
+	  ApiUtil.createTask(task);
 	  this.setState({ pressed: false, subject: "" });
 	}), _defineProperty(_React$createClass, 'updatePomos', function updatePomos(event) {
 	  this.setState({ pomodoros: event.target.value });
@@ -33221,7 +33305,7 @@
 	}), _defineProperty(_React$createClass, 'render', function render() {
 	  if (!this.state.pressed) {
 	    return React.createElement(
-	      'div',
+	      'button',
 	      { className: 'task-creation-button', onClick: this.isPressed },
 	      React.createElement(
 	        'p',
@@ -33281,6 +33365,7 @@
 	
 	var React = __webpack_require__(1);
 	var ApiUtil = __webpack_require__(230);
+	var SessionStore = __webpack_require__(266);
 	
 	var TaskForm = React.createClass({
 	  displayName: 'TaskForm',
@@ -33353,6 +33438,7 @@
 	var ApiUtil = __webpack_require__(230);
 	var TaskStore = __webpack_require__(240);
 	var Timer = __webpack_require__(261);
+	var SessionStore = __webpack_require__(266);
 	
 	var ShowTask = React.createClass({
 		displayName: 'ShowTask',
@@ -33362,6 +33448,7 @@
 		},
 	
 		_onChange: function _onChange() {
+			debugger;
 			this.setState({
 				task: TaskStore.find(this.props.params.id)
 			});
@@ -33372,8 +33459,8 @@
 		},
 	
 		componentDidMount: function componentDidMount() {
+			debugger;
 			this.taskListener = TaskStore.addListener(this._onChange);
-			ApiUtil.fetchAllTasks(this.props.params.id);
 		},
 	
 		componentWillUnmount: function componentWillUnmount() {
@@ -33381,24 +33468,11 @@
 		},
 	
 		render: function render() {
+			debugger;
 			if (this.state.task) {
 				return React.createElement(
 					'div',
 					{ className: 'task-container group' },
-					React.createElement(
-						'div',
-						{ className: 'task-sidebar' },
-						React.createElement(
-							'div',
-							null,
-							this.state.task.subject
-						),
-						React.createElement(
-							'div',
-							null,
-							this.state.task.pomodoros
-						)
-					),
 					React.createElement(Timer, { task: this.state.task })
 				);
 			};
@@ -33420,7 +33494,7 @@
 	
 	var React = __webpack_require__(1);
 	var ApiUtil = __webpack_require__(230);
-	
+	var SessionStore = __webpack_require__(266);
 	var Timer = React.createClass({
 		displayName: 'Timer',
 	
@@ -33430,7 +33504,15 @@
 		},
 	
 		getInitialState: function getInitialState() {
-			return { minutes: 0, seconds: 30, paused: true, started: false, modal: false, progress: 1500, dial: -45 };
+			return {
+				minutes: 0,
+				seconds: 15,
+				paused: true,
+				started: false,
+				modal: false,
+				progress: 1500,
+				dial: -45,
+				alarm: false };
 		},
 	
 		startTime: function startTime() {
@@ -33471,6 +33553,7 @@
 		},
 	
 		endTime: function endTime() {
+			this.setState({ alarm: true });
 			clearInterval(this.interval);
 		},
 	
@@ -33488,18 +33571,28 @@
 			if (task["pomodoros"] > 1) {
 				task["pomodoros"] = task["pomodoros"] - 1;
 				ApiUtil.editTask(task, this.props.task);
-				this.setState({ minutes: 25, seconds: 0, paused: true, started: false, dial: -45 });
+				this.setState({ minutes: 25, seconds: 0, paused: true, started: false, dial: -45, progress: 1500 });
 			} else {
 				this.finishTask();
 			};
 		},
 	
 		addPomodoro: function addPomodoro() {
-			this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false, dial: -45 });
+			this.setState({
+				minutes: 25,
+				seconds: 0,
+				paused: true,
+				started: false,
+				modal: false,
+				dial: -45,
+				progress: 1500,
+				alarm: false
+			});
 		},
 	
 		deleteTask: function deleteTask() {
-			ApiUtil.deleteTask(this.props.task);
+			var user = SessionStore.currentUser();
+			ApiUtil.deleteTask(this.props.task, user);
 			this.context.router.push('');
 		},
 	
@@ -33590,40 +33683,69 @@
 				transform: 'rotate(' + this.state.dial + 'deg)'
 			};
 	
-			console.log(this.state);
+			var alarm = "";
+			if (this.state.alarm) {
+				alarm = React.createElement(
+					'audio',
+					null,
+					React.createElement('source', { src: './../../../app/assets/sounds/alarm.mp3', type: 'audio/mp3' })
+				);
+			}
 	
 			return React.createElement(
 				'div',
-				{ className: 'pomodoro-container' },
+				{ className: 'timer-container' },
 				React.createElement(
 					'div',
-					{ className: 'pomodoro' },
-					this.props.task.pomodoros,
+					{ className: 'pomodoro-container' },
+					this.props.task.subject,
+					React.createElement(
+						'ul',
+						{ className: 'pomodoro' },
+						React.createElement(
+							'li',
+							null,
+							React.createElement(
+								'div',
+								null,
+								React.createElement(
+									'div',
+									{ className: 'leaves' },
+									React.createElement('div', { className: 'leaf-1' }),
+									React.createElement('div', { className: 'leaf-2' }),
+									React.createElement('div', { className: 'leaf-3' }),
+									React.createElement('div', { className: 'leaf-4' }),
+									React.createElement('div', { className: 'leaf-5' })
+								)
+							)
+						),
+						React.createElement(
+							'li',
+							null,
+							React.createElement(
+								'div',
+								{ className: 'pomodoro-count' },
+								this.props.task.pomodoros
+							)
+						)
+					),
 					React.createElement(
 						'div',
-						{ className: 'leaves' },
-						React.createElement('div', { className: 'leaf-1' }),
-						React.createElement('div', { className: 'leaf-2' }),
-						React.createElement('div', { className: 'leaf-3' }),
-						React.createElement('div', { className: 'leaf-4' }),
-						React.createElement('div', { className: 'leaf-5' })
-					)
+						{ className: 'clock' },
+						minutes,
+						':',
+						seconds,
+						React.createElement(
+							'div',
+							{ className: 'progress-bar' },
+							React.createElement('div', { className: 'progress-bar-cover', style: progressBarCover }),
+							React.createElement('div', { className: 'progress-bar-1', style: rotater }),
+							React.createElement('div', { className: 'progress-blank' })
+						)
+					),
+					button
 				),
-				React.createElement(
-					'div',
-					{ className: 'clock' },
-					minutes,
-					':',
-					seconds,
-					React.createElement(
-						'div',
-						{ className: 'progress-bar' },
-						React.createElement('div', { className: 'progress-bar-cover', style: progressBarCover }),
-						React.createElement('div', { className: 'progress-bar-1', style: rotater }),
-						React.createElement('div', { className: 'progress-blank' })
-					)
-				),
-				button,
+				alarm,
 				modal
 			);
 		}
@@ -33660,6 +33782,12 @@
 	    this.context.router.push('');
 	  },
 	
+	  logout: function logout() {
+	    ApiUtil.logout(function () {
+	      this.context.router.push("/welcome");
+	    }.bind(this));
+	  },
+	
 	  render: function render() {
 	
 	    return React.createElement(
@@ -33675,16 +33803,434 @@
 	            'div',
 	            { className: 'over-head-logo', onClick: this.goHome },
 	            'Pomo Todo'
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'logout', onClick: this.logout },
+	            'Log Out'
 	          )
 	        )
 	      ),
-	      this.props.children,
-	      React.createElement(TaskIndex, null)
+	      React.createElement(
+	        'main',
+	        { className: 'main' },
+	        this.props.children,
+	        React.createElement(TaskIndex, null)
+	      )
 	    );
 	  }
 	});
 	
 	module.exports = App;
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ApiUtil = __webpack_require__(230);
+	var SignUpForm = __webpack_require__(264);
+	
+	var LoginForm = React.createClass({
+	  displayName: 'LoginForm',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      username: "",
+	      password: ""
+	    };
+	  },
+	
+	  goToSignUp: function goToSignUp() {
+	    this.context.router.push('signup');
+	  },
+	
+	  render: function render() {
+	    return React.createElement(
+	      'main',
+	      { className: 'login-main' },
+	      React.createElement(
+	        'div',
+	        { className: 'login-header' },
+	        React.createElement(
+	          'h1',
+	          null,
+	          'Login'
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'login-containter' },
+	        React.createElement(
+	          'form',
+	          { className: 'login-form', onSubmit: this.handleSubmit },
+	          React.createElement(
+	            'label',
+	            { className: 'login-label', htmlFor: 'name' },
+	            'Username'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement('input', {
+	            className: 'login-input',
+	            onChange: this.updateName,
+	            type: 'text',
+	            value: this.state.name
+	          }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'label',
+	            { className: 'login-label', htmlFor: 'password' },
+	            'Password'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement('input', {
+	            className: 'login-input',
+	            onChange: this.updatePassword,
+	            type: 'password',
+	            value: this.state.password
+	          }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'button',
+	            { className: 'submit' },
+	            'Submit'
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'p',
+	          null,
+	          'Don\'t have an account?'
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'submit', onClick: this.goToSignUp },
+	          'Sign Up!'
+	        )
+	      )
+	    );
+	  },
+	
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	
+	    var router = this.context.router;
+	
+	    ApiUtil.login(this.state, function () {
+	      router.push("/");
+	    });
+	  },
+	
+	  updateName: function updateName(e) {
+	    this.setState({ username: e.currentTarget.value });
+	  },
+	
+	  updatePassword: function updatePassword(e) {
+	    this.setState({ password: e.currentTarget.value });
+	  }
+	
+	});
+	
+	module.exports = LoginForm;
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ApiUtil = __webpack_require__(230);
+	
+	var SignUpForm = React.createClass({
+	  displayName: 'SignUpForm',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      username: "",
+	      password: ""
+	    };
+	  },
+	
+	  goToLogin: function goToLogin() {
+	    this.context.router.push('login');
+	  },
+	
+	  render: function render() {
+	    return React.createElement(
+	      'main',
+	      { className: 'sign-up-main' },
+	      React.createElement(
+	        'div',
+	        { className: 'sign-up-header' },
+	        React.createElement(
+	          'h1',
+	          null,
+	          'Please Sign Up'
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'sign-up-containter' },
+	        React.createElement(
+	          'form',
+	          { className: 'sign-up-form', onSubmit: this.handleSubmit },
+	          React.createElement(
+	            'label',
+	            { className: 'sign-up-label', htmlFor: 'name' },
+	            'Name'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement('input', {
+	            className: 'sign-up-input',
+	            onChange: this.updateName,
+	            type: 'text',
+	            value: this.state.name
+	          }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'label',
+	            { className: 'sign-up-label', htmlFor: 'password' },
+	            'Password'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement('input', {
+	            className: 'sign-up-input',
+	            onChange: this.updatePassword,
+	            type: 'password',
+	            value: this.state.password
+	          }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'button',
+	            { className: 'submit' },
+	            'Submit'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'sign-up-form' },
+	          React.createElement(
+	            'h2',
+	            { className: 'sign-up-header' },
+	            'Have a Google account?'
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'submit' },
+	            'Sign up with Google'
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'p',
+	          null,
+	          'Already have a Mello acount?'
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'login', onClick: this.goToLogin },
+	          'Login...'
+	        )
+	      )
+	    );
+	  },
+	
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	    var user = {};
+	
+	    Object.keys(this.state).forEach(function (key) {
+	      {
+	        user[key] = this.state[key];
+	      }
+	    }.bind(this));
+	
+	    var router = this.context.router;
+	
+	    ApiUtil.signUp(user, function () {
+	      router.push("/");
+	    });
+	  },
+	
+	  updateName: function updateName(e) {
+	    this.setState({ username: e.currentTarget.value });
+	  },
+	
+	  updatePassword: function updatePassword(e) {
+	    this.setState({ password: e.currentTarget.value });
+	  }
+	
+	});
+	
+	module.exports = SignUpForm;
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(168).History;
+	var ApiUtil = __webpack_require__(230);
+	var SignUpForm = __webpack_require__(264);
+	var LoginForm = __webpack_require__(263);
+	
+	var Welcome = React.createClass({
+		displayName: 'Welcome',
+	
+	
+		contextTypes: {
+			router: React.PropTypes.object.isRequired
+		},
+	
+		goToLogin: function goToLogin() {
+			this.context.router.push('login');
+		},
+	
+		goToSignUp: function goToSignUp() {
+			this.context.router.push('signup');
+		},
+	
+		render: function render() {
+			return React.createElement(
+				'div',
+				null,
+				React.createElement(
+					'div',
+					{ className: 'first-main' },
+					React.createElement(
+						'div',
+						{ className: 'main-page-logo' },
+						'Mello'
+					),
+					React.createElement(
+						'h1',
+						{ className: 'main-blurb' },
+						'Mello is the like totally free, flexible, and visual way to like organize stuff.'
+					),
+					React.createElement(
+						'button',
+						{ className: 'submit main-submit', onClick: this.goToSignUp },
+						'Sign Up it\'s like, FREE!'
+					),
+					React.createElement('br', null),
+					React.createElement(
+						'button',
+						{ className: 'login', onClick: this.goToLogin },
+						'Login...'
+					)
+				),
+				React.createElement('div', { className: 'second-main' }),
+				React.createElement(
+					'footer',
+					null,
+					'if you are reading this, that means I\'m already dead...'
+				)
+			);
+		}
+	
+	});
+	
+	module.exports = Welcome;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(241).Store;
+	var SessionConstants = __webpack_require__(267);
+	var AppDispatcher = __webpack_require__(232);
+	
+	var SessionStore = new Store(AppDispatcher);
+	
+	var _currentUser;
+	var _currentUserHasBeenFetched = false;
+	
+	SessionStore.currentUser = function () {
+	  return _currentUser;
+	};
+	
+	SessionStore.isLoggedIn = function () {
+	  return !!_currentUser;
+	};
+	
+	SessionStore.currentUserHasBeenFetched = function () {
+	  return _currentUserHasBeenFetched;
+	};
+	
+	SessionStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case SessionConstants.CURRENT_USER_RECEIVED:
+	      _currentUser = payload.currentUser;
+	      _currentUserHasBeenFetched = true;
+	      SessionStore.__emitChange();
+	      break;
+	    case SessionConstants.LOGOUT:
+	      _currentUser = null;
+	      SessionStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = SessionStore;
+
+/***/ },
+/* 267 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  CURRENT_USER_RECEIVED: "CURRENT_USER_RECEIVED",
+	  LOGOUT: "LOGOUT"
+	};
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var AppDispatcher = __webpack_require__(232);
+	var SessionConstants = __webpack_require__(267);
+	
+	var SessionActions = {
+	
+	  currentUserReceived: function currentUserReceived(currentUser) {
+	    AppDispatcher.dispatch({
+	      actionType: SessionConstants.CURRENT_USER_RECEIVED,
+	      currentUser: currentUser
+	    });
+	  },
+	
+	  logout: function logout() {
+	    AppDispatcher.dispatch({
+	      actionType: SessionConstants.LOGOUT
+	    });
+	  }
+	};
+	
+	module.exports = SessionActions;
 
 /***/ }
 /******/ ]);

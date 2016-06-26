@@ -16,9 +16,15 @@ var App = React.createClass({
 		return { children: this.props.children };
 	},
 
-  	goHome: function () {
-      	this.context.router.push('');
-    },
+	goHome: function () {
+    	this.context.router.push('');
+  },
+
+  logout: function () {
+    ApiUtil.logout(function () {
+      this.context.router.push("/welcome");
+    }.bind(this));
+  },
 
 
 
@@ -35,10 +41,15 @@ var App = React.createClass({
             <div className="over-head-logo" onClick={this.goHome}>
               Pomo Todo
             </div>
+            <div className="logout" onClick={this.logout}>
+              Log Out
+            </div>
           </nav>
         </header>
+        <main className="main">
         {this.props.children}
         <TaskIndex />
+        </main>
       </div>
     );
   }

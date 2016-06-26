@@ -1,15 +1,19 @@
 var TaskActions = require('../actions/taskActions.js');
+var SessionActions = require('../actions/sessionActions.js');
+
 
 module.exports = {
 
-	fetchAllTasks: function () {
+	fetchAllTasks: function (userId) {
   
-
+    debugger
     $.ajax({
       url: "api/tasks",
       method: "GET",
       dataType: "json",
+      data: {userId: userId},
       success: function (tasks) {
+        debugger
       
         TaskActions.receiveAllTasks(tasks);
       },
@@ -19,7 +23,7 @@ module.exports = {
     });
   },
 
-  createTask: function (task, board_id, card_id) {
+  createTask: function (task) {
   
     $.ajax({
       url: "api/tasks",
@@ -44,15 +48,70 @@ module.exports = {
     });
   },
 
-  deleteTask: function (task) {
+  deleteTask: function (task, user) {
+    debugger
     $.ajax({
       url: "api/tasks/" + task.id,
       method: "DELETE",
-      data: {task: task},
+      data: {task: task, userId: user.id},
       dataType: "json",
       success: function (tasks) {
       
         TaskActions.receiveAllTasks(tasks);
+      }
+    });
+  },
+
+  signUp: function(credentials, callback) {
+    $.ajax({
+      type: "POST",
+      url: "/api/users",
+      dataType: "json",
+      data: {user: credentials},
+      success: function(currentUser) {
+        SessionActions.currentUserReceived(currentUser);
+        callback && callback();
+      }
+    });
+  },
+
+  login: function(credentials, callback) {
+    debugger
+    $.ajax({
+      type: "POST",
+      url: "/api/session",
+      dataType: "json",
+      data: credentials,
+      success: function(currentUser) {
+        debugger
+        SessionActions.currentUserReceived(currentUser);
+        callback && callback();
+      }
+    });
+  },
+
+  logout: function(callback) {
+    $.ajax({
+      type: "DELETE",
+      url: "/api/session",
+      dataType: "json",
+      success: function() {
+        SessionActions.logout();
+        callback && callback();
+      }
+    });
+  },
+
+  fetchCurrentUser: function(completion) {
+    $.ajax({
+      type: "GET",
+      url: "/api/session",
+      dataType: "json",
+      success: function(currentUser) {
+        SessionActions.currentUserReceived(currentUser);
+      },
+      complete: function() {
+        completion && completion();
       }
     });
   }  

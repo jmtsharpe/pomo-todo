@@ -28,7 +28,7 @@ class Api::TasksController < ApplicationController
   end
 
   def index
-    @tasks = Task.all
+    @tasks = Task.where(user_id: params[:userId])
     render :index
   end
 
@@ -39,7 +39,7 @@ class Api::TasksController < ApplicationController
 
   def destroy
     if Task.find(params[:id]).destroy
-      @tasks = Task.all
+      @tasks = Task.where(user_id: params[:userId])
       render :index
     end
   end
@@ -47,7 +47,7 @@ class Api::TasksController < ApplicationController
   private
 
   def task_params
-    params.require(:task).permit( :subject, :pomodoros )
+    params.require(:task).permit( :subject, :pomodoros, :user_id )
   end
 
 end

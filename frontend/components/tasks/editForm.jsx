@@ -1,13 +1,7 @@
 var React = require('react');
 var ApiUtil = require('../../util/apiUtil');
-// var LinkedStateMixin = require('react-addons-linked-state-mixin');
-// var App = require('./../app/app');
 
 var EditTaskForm = React.createClass({
-  // contextTypes: {
-  //     router: React.PropTypes.object.isRequired
-  //   },
-  // mixins: [LinkedStateMixin],
 
   blankAttrs: {
     subject: '',

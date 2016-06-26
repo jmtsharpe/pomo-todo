@@ -1,6 +1,6 @@
 const React = require('react');
 const ApiUtil = require('./../../util/apiUtil');
-
+var SessionStore = require('./../../stores/session.js');
 var Timer = React.createClass({
 
 	contextTypes: {
@@ -8,7 +8,15 @@ var Timer = React.createClass({
     },
 
 	getInitialState: function () {
-		return ({ minutes: 0, seconds: 30, paused: true, started: false, modal: false, progress: 1500, dial: -45 })
+		return ({ 
+			minutes: 0, 
+			seconds: 15, 
+			paused: true, 
+			started: false, 
+			modal: false, 
+			progress: 1500, 
+			dial: -45,
+			alarm: false })
 	},
 
 	startTime: function () {
@@ -49,6 +57,7 @@ var Timer = React.createClass({
 	},
 
 	endTime: function () {
+		this.setState({ alarm: true })
 		clearInterval(this.interval);
 	},
 
@@ -66,18 +75,28 @@ var Timer = React.createClass({
 	    if (task["pomodoros"] > 1) {
 		    task["pomodoros"] = task["pomodoros"] - 1;
 	    	ApiUtil.editTask(task, this.props.task);
-	    	this.setState({ minutes: 25, seconds: 0, paused: true, started: false, dial: -45 });
+	    	this.setState({ minutes: 25, seconds: 0, paused: true, started: false, dial: -45, progress: 1500 });
 		} else {
 	    	this.finishTask();
 		};
   	},
 
   	addPomodoro: function () {
-	    this.setState({ minutes: 25, seconds: 0, paused: true, started: false, modal: false, dial: -45 });
+	    this.setState({ 
+	    	minutes: 25, 
+	    	seconds: 0, 
+	    	paused: true, 
+	    	started: false, 
+	    	modal: false, 
+	    	dial: -45, 
+	    	progress: 1500, 
+	    	alarm: false 
+	    });
   	},
 
   	deleteTask: function () {
-  		ApiUtil.deleteTask(this.props.task);
+  		var user = SessionStore.currentUser();
+  		ApiUtil.deleteTask(this.props.task, user);
 	    this.context.router.push('');
   	},
 
@@ -148,20 +167,33 @@ var Timer = React.createClass({
 			transform: 'rotate(' + this.state.dial + 'deg)'
 		};
 
-		console.log(this.state)
+		var alarm = ""
+		if (this.state.alarm) {
+			alarm = <audio><source src="./../../../app/assets/sounds/alarm.mp3" type="audio/mp3"/></audio>
+		}
 		
 		return (
+			<div className="timer-container">
 			<div className="pomodoro-container">
-				<div className="pomodoro">
-				{this.props.task.pomodoros}
+
+				{this.props.task.subject}
+				<ul className="pomodoro">
+				<li>
+				<div >
 				<div className="leaves">
 					<div className="leaf-1"></div>
 					<div className="leaf-2"></div>
 					<div className="leaf-3"></div>
 					<div className="leaf-4"></div>
 					<div className="leaf-5"></div>
+
 				</div>
 				</div>
+				</li>
+				<li>
+				<div className="pomodoro-count">{this.props.task.pomodoros}</div>
+				</li>
+				</ul>
 
 				<div className="clock"> 
 					{minutes}:{seconds} 
@@ -172,7 +204,10 @@ var Timer = React.createClass({
 				</div>
 				</div>				
 				{button}
+			</div>
+				{alarm}
 				{modal}
+				
 			</div>
 		);
 		
