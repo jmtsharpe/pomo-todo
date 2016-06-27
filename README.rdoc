@@ -1,28 +1,53 @@
-== README
+= PomoTodo
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+PomoToDo is a task application based on the pomodoro technique for pymetrics.
 
-Things you may want to cover:
+=== Features
 
-* Ruby version
+* View a list of personal to-do items
 
-* System dependencies
+* Create, update, and delete to-do items
 
-* Configuration
+* View number of Pomodoro’s associated with each to-do items
 
-* Database creation
+* Start a Pomodoro (25 minute timer) for a To-Do item
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Alert when Pomodoro is over
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+=== Get Started
+
+PomTodo something live by clicking here[http://pomo-todo.herokuapp.com]
+
+or
+
+PomoTodo something locally by:
+
+1. Clone repo
+
+2. Run rake db migrate
+
+3. Run rails s
+
+4. Go to local host
+
+=== Stack
+
+Languages: Ruby and JavaScript
+Database: SQLite and PostgreSQL
+Framework: React with jQuery
+
+=== Choices/Tradeoffs
+
+==== Ruby v. Python
+
+My skills in Ruby are much stronger than my skills in Python. Given the time constraints and the importance of the project, I opted to program in my strongest language between the two. Moreover, Ruby on Rails is fantastic for creating and deploying a web application quickly. 
+
+==== React with jQuery
+
+React components don’t define transition between states. It only renders when it changes which makes it extremely responsive and eliminates the task of manually tweaking the DOM.  The React/Flux one-way data transfer structure makes is great for adding, deleting, and keeping track of tasks.
+
+==== SQLite and PostgreSQL
+
+I’m deploying through Heroku which uses PostgreSQL. I use SQLite locally because it’s very lightweight which is great for simple web applications. 
+
