@@ -34,10 +34,11 @@ var App = React.createClass({
           <nav className="nav-bar group">
           
             <div className="over-head-logo">
+            
               Pomo Todo
+            </div>
             <div className="logout" onClick={this.logout}>
               Log Out
-            </div>
             </div>
           </nav>
         </header>

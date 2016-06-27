@@ -100,8 +100,8 @@ button:hover {
 
 .over-head-logo {
 	margin: auto;
-	width: 100%;
-	text-align: left;
+	padding: 10px;
+	float: left;
 }
 
 .logout {

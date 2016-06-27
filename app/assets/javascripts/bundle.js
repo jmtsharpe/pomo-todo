@@ -33920,12 +33920,12 @@
 	          React.createElement(
 	            'div',
 	            { className: 'over-head-logo' },
-	            'Pomo Todo',
-	            React.createElement(
-	              'div',
-	              { className: 'logout', onClick: this.logout },
-	              'Log Out'
-	            )
+	            'Pomo Todo'
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'logout', onClick: this.logout },
+	            'Log Out'
 	          )
 	        )
 	      ),
