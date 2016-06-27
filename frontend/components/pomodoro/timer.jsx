@@ -50,7 +50,9 @@ var Timer = React.createClass({
 				this.endTime();
 				if (this.props.task) {
 					this.removePomodoro();	
-				};
+				} else {
+					this.finishTask();
+				}
 			};
 		};
 	},
