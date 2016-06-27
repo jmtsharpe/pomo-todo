@@ -45,7 +45,7 @@ My skills in Ruby are much stronger than my skills in Python. Given the time con
 
 ==== React with jQuery
 
-React components don’t define transition between states. It only renders when it changes which makes it extremely responsive and eliminates the task of manually tweaking the DOM.  The React/Flux one-way data transfer structure makes is great for adding, deleting, and keeping track of tasks.
+React components don’t define transition between states. It only renders when it changes which makes it extremely responsive and eliminates the task of manually tweaking the DOM.  The React/Flux one-way data transfer structure is great for adding, deleting, and keeping track of tasks.
 
 ==== SQLite and PostgreSQL
 
