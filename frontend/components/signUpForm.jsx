@@ -29,7 +29,7 @@ var SignUpForm = React.createClass({
 
 					<form className="sign-up-form" onSubmit={this.handleSubmit}>
 
-						<label className="sign-up-label" htmlFor="name">Name</label>
+						<label className="sign-up-label" htmlFor="name">Userame</label>
 						<br />
 						<input
               className="sign-up-input"

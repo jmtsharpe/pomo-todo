@@ -34150,7 +34150,7 @@
 	          React.createElement(
 	            'label',
 	            { className: 'sign-up-label', htmlFor: 'name' },
-	            'Name'
+	            'Userame'
 	          ),
 	          React.createElement('br', null),
 	          React.createElement('input', {
