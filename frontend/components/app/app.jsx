@@ -16,10 +16,6 @@ var App = React.createClass({
 		return { children: this.props.children };
 	},
 
-	goHome: function () {
-    	this.context.router.push('');
-  },
-
   logout: function () {
     ApiUtil.logout(function () {
       this.context.router.push("/welcome");
@@ -35,13 +31,13 @@ var App = React.createClass({
     return (
       <div>
         <header className="over-head group">
-          <nav className="nav-bar">
+          <nav className="nav-bar group">
           
-            <div className="over-head-logo" onClick={this.goHome}>
+            <div className="over-head-logo">
               Pomo Todo
-            </div>
             <div className="logout" onClick={this.logout}>
               Log Out
+            </div>
             </div>
           </nav>
         </header>

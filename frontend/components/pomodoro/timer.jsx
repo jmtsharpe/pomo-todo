@@ -1,6 +1,8 @@
 const React = require('react');
 const ApiUtil = require('./../../util/apiUtil');
 var SessionStore = require('./../../stores/session.js');
+var Alarm = require('react-sound');
+
 var Timer = React.createClass({
 
 	contextTypes: {
@@ -173,11 +175,6 @@ var Timer = React.createClass({
 			transform: 'rotate(' + this.state.dial + 'deg)'
 		};
 
-		var alarm = ""
-		if (this.state.alarm) {
-			alarm = <audio><source src="./../../../app/assets/sounds/alarm.mp3" type="audio/mp3"/></audio>
-		}
-
 		var subject = "Let's do a task!";
 		var pomodoros = "";
 		if (this.props.task) {
@@ -220,7 +217,6 @@ var Timer = React.createClass({
 				</div>				
 				{button}
 			</div>
-				{alarm}
 				{modal}
 				
 			</div>
