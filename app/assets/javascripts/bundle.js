@@ -34251,7 +34251,7 @@
 					React.createElement(
 						'h1',
 						{ className: 'main-blurb' },
-						'POMO TODO is the pomodorro app for goer on the go'
+						'POMO TODO is the pomodorro app for the goer on the go'
 					),
 					React.createElement(
 						'div',

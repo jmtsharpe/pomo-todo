@@ -25,7 +25,7 @@ var Welcome = React.createClass({
 			<div className="first-main">
 				<div className="main-page-logo">POMO TODO</div>
 				<h1 className="main-blurb">
-					POMO TODO is the pomodorro app for goer on the go
+					POMO TODO is the pomodorro app for the goer on the go
 				</h1>
 
 				<div className="second-main">
