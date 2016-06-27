@@ -10,8 +10,8 @@ var Timer = React.createClass({
 
 	getInitialState: function () {
 		return ({ 
-			minutes: 0, 
-			seconds: 5, 
+			minutes: 25, 
+			seconds: 0, 
 			paused: true, 
 			started: false, 
 			modal: false, 
