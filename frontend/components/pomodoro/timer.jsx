@@ -1,7 +1,6 @@
 const React = require('react');
 const ApiUtil = require('./../../util/apiUtil');
 var SessionStore = require('./../../stores/session.js');
-var Alarm = require('react-sound');
 
 var Timer = React.createClass({
 
