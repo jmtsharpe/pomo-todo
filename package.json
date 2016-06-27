@@ -24,6 +24,7 @@
     "react-dom": "^15.1.0",
     "react-link-state": "^0.1.2",
     "react-router": "^2.4.1",
+    "react-sound": "^0.5.0",
     "webpack": "^1.13.1"
   }
 }
