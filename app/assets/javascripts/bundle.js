@@ -58,7 +58,7 @@
 	var TaskIndex = __webpack_require__(238);
 	var TaskIndexItem = __webpack_require__(239);
 	var TaskShow = __webpack_require__(264);
-	var App = __webpack_require__(265);
+	var App = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/app/app.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	var LoginForm = __webpack_require__(266);
 	var SignUpForm = __webpack_require__(267);
@@ -33852,125 +33852,7 @@
 	module.exports = ShowTask;
 
 /***/ },
-/* 265 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(168).History;
-	var TaskStore = __webpack_require__(260);
-	
-	var ApiUtil = __webpack_require__(229);
-	var TaskIndex = __webpack_require__(238);
-	
-	var App = React.createClass({
-	  displayName: 'App',
-	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  getInitialState: function getInitialState() {
-	    return { children: this.props.children };
-	  },
-	
-	  logout: function logout() {
-	    ApiUtil.logout(function () {
-	      this.context.router.push("/welcome");
-	    }.bind(this));
-	  },
-	
-	  openTimer: function openTimer() {
-	    this.context.router.push('timer');
-	  },
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'header',
-	        { className: 'over-head group' },
-	        React.createElement(
-	          'nav',
-	          { className: 'nav-bar group' },
-	          React.createElement(
-	            'div',
-	            { className: 'over-head-logo' },
-	            'Pomo Todo',
-	            React.createElement(
-	              'div',
-	              { className: 'logout', onClick: this.logout },
-	              'Log Out'
-	            )
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        'main',
-	        { className: 'main' },
-	        React.createElement(
-	          'ul',
-	          { className: 'main-list group' },
-	          React.createElement(
-	            'li',
-	            { className: 'main-child' },
-	            React.createElement(
-	              'div',
-	              null,
-	              React.createElement(
-	                'h1',
-	                null,
-	                'Welcome to Pomo Todo'
-	              ),
-	              React.createElement(
-	                'p',
-	                null,
-	                'Make tasks and assign 25 minute timers called "Pomodoros"'
-	              ),
-	              React.createElement(
-	                'p',
-	                null,
-	                'Assign as many Pomodoros as you think you need to complete the task'
-	              ),
-	              React.createElement(
-	                'p',
-	                null,
-	                ' Or just start a timer and get to it.'
-	              ),
-	              React.createElement(
-	                'h2',
-	                null,
-	                'LET\'S POMO DO IT!'
-	              )
-	            ),
-	            React.createElement(
-	              'button',
-	              { className: 'open-timer-button', onClick: this.openTimer },
-	              'Start a timer'
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            { className: 'main-task-index' },
-	            React.createElement(
-	              'div',
-	              null,
-	              React.createElement(TaskIndex, null)
-	            )
-	          )
-	        ),
-	        this.props.children
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = App;
-
-/***/ },
+/* 265 */,
 /* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
