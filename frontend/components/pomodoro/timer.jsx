@@ -16,8 +16,8 @@ var Timer = React.createClass({
 			started: false, 
 			modal: false, 
 			progress: 1500, 
-			dial: -45,
-			alarm: false })
+			dial: -45
+		})
 	},
 
 	startTime: function () {
@@ -60,7 +60,6 @@ var Timer = React.createClass({
 	},
 
 	endTime: function () {
-		this.setState({ alarm: true })
 		clearInterval(this.interval);
 	},
 
