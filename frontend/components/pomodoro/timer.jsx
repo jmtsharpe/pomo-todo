@@ -125,12 +125,21 @@ var Timer = React.createClass({
 		var modal = ""
 
 		if (this.state.modal) {
-			modal = <div className="finish-task-modal">
-						<div className="clock-end-buttons-container">
-						<button className="clock-end-buttons" onClick={this.addPomodoro}>Continue</button>
-						<button className="clock-end-buttons" onClick={this.deleteTask}>Finish</button>
+			if (this.props.task) {
+				modal = <div className="finish-task-modal">
+							<div className="clock-end-buttons-container">
+							<button className="clock-end-buttons" onClick={this.addPomodoro}>Continue</button>
+							<button className="clock-end-buttons" onClick={this.deleteTask}>Finish</button>
+							</div>
 						</div>
-					</div>
+			} else {
+				modal = <div className="finish-task-modal">
+							<div className="clock-end-buttons-container">
+							<button className="clock-end-buttons" onClick={this.addPomodoro}>Reset</button>
+							<button className="clock-end-buttons" onClick={this.closeTimer}>Finish</button>
+							</div>
+						</div>
+			}
 		};
 
 

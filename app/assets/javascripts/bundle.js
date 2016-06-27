@@ -33658,24 +33658,45 @@
 			var modal = "";
 	
 			if (this.state.modal) {
-				modal = React.createElement(
-					'div',
-					{ className: 'finish-task-modal' },
-					React.createElement(
+				if (this.props.task) {
+					modal = React.createElement(
 						'div',
-						{ className: 'clock-end-buttons-container' },
+						{ className: 'finish-task-modal' },
 						React.createElement(
-							'button',
-							{ className: 'clock-end-buttons', onClick: this.addPomodoro },
-							'Continue'
-						),
-						React.createElement(
-							'button',
-							{ className: 'clock-end-buttons', onClick: this.deleteTask },
-							'Finish'
+							'div',
+							{ className: 'clock-end-buttons-container' },
+							React.createElement(
+								'button',
+								{ className: 'clock-end-buttons', onClick: this.addPomodoro },
+								'Continue'
+							),
+							React.createElement(
+								'button',
+								{ className: 'clock-end-buttons', onClick: this.deleteTask },
+								'Finish'
+							)
 						)
-					)
-				);
+					);
+				} else {
+					modal = React.createElement(
+						'div',
+						{ className: 'finish-task-modal' },
+						React.createElement(
+							'div',
+							{ className: 'clock-end-buttons-container' },
+							React.createElement(
+								'button',
+								{ className: 'clock-end-buttons', onClick: this.addPomodoro },
+								'Reset'
+							),
+							React.createElement(
+								'button',
+								{ className: 'clock-end-buttons', onClick: this.closeTimer },
+								'Finish'
+							)
+						)
+					);
+				}
 			};
 	
 			if (this.state.minutes < 10) {
