@@ -33752,7 +33752,11 @@
 				React.createElement(
 					'div',
 					{ className: 'pomodoro-container' },
-					subject,
+					React.createElement(
+						'h1',
+						{ className: 'timer-subject' },
+						subject
+					),
 					React.createElement(
 						'div',
 						{ className: 'clock' },

@@ -195,7 +195,7 @@ var Timer = React.createClass({
 			<div className="timer-container">
 			<div className="pomodoro-container">
 
-				{subject}
+				<h1 className="timer-subject">{subject}</h1>
 
 
 				<div className="clock"> 
