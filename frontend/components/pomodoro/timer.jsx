@@ -17,7 +17,7 @@ var Timer = React.createClass({
 			modal: false, 
 			progress: 1500, 
 			dial: -45
-		})
+		});
 	},
 
 	startTime: function () {

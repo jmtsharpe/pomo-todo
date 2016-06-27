@@ -42,20 +42,20 @@ var App = React.createClass({
           </nav>
         </header>
         <main className="main">
-        <ul className="main-list group">
-          <li className="main-child">
-            <div >
-              <h1>Welcome to Pomo Todo</h1>
-              <p>Make tasks and assign 25 minute timers called "Pomodoros"</p>
-              <p>Assign as many Pomodoros as you think you need to complete the task</p>
-              <p> Or just start a timer and get to it.</p>
-              <h2>LET'S POMO DO IT!</h2>
-            </div>
-            <button className="open-timer-button" onClick={this.openTimer}>Start a timer</button>
-          </li>
-          <li className="main-task-index"><div ><TaskIndex /></div></li>
-        </ul>
-        {this.props.children}
+          <ul className="main-list group">
+            <li className="main-child">
+              <div>
+                <h1>Welcome to Pomo Todo</h1>
+                <p>Make tasks and assign 25 minute timers called "Pomodoros"</p>
+                <p>Assign as many Pomodoros as you think you need to complete the task</p>
+                <p> Or just start a timer and get to it.</p>
+                <h2>LET'S POMO DO IT!</h2>
+              </div>
+              <button className="open-timer-button" onClick={this.openTimer}>Start a timer</button>
+            </li>
+            <li className="main-task-index"><div ><TaskIndex /></div></li>
+          </ul>
+          {this.props.children}
         </main>
       </div>
     );
