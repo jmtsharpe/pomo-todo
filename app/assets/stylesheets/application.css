@@ -106,6 +106,15 @@ button:hover {
 
 .logout {
 	float: right;
+	padding: 10px;
+}
+
+.logout:hover {
+	cursor: pointer;
+	padding: 9px;
+	border-radius: 1px solid rgb(1,22,39);
+	color: rgb(1,22,39);
+
 }
 /*/ /*/ /*/ ----task index---- /*/ /*/ /*/
 
