@@ -12,7 +12,6 @@ class Api::UsersController < ApplicationController
       render json: @user
     else
       flash.now[:errors] = @user.errors.full_messages
-      debugger
       render :new
     end
   end

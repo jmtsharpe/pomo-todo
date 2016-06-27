@@ -10,7 +10,6 @@ var ShowTask = React.createClass({
   	},
 
   	_onChange: function () {
-  		debugger
     	this.setState({
       		task: TaskStore.find(this.props.params.id)
     	});
@@ -21,7 +20,7 @@ var ShowTask = React.createClass({
 	},
 
   	componentDidMount: function () {
-  		debugger
+ 
 		this.taskListener = TaskStore.addListener(this._onChange);
   	},
 
@@ -30,7 +29,6 @@ var ShowTask = React.createClass({
   	},
 
 	render: function () {
-		debugger
 		if (this.state.task) {
 			return (
 				<div className="task-container group">

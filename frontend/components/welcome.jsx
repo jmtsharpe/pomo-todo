@@ -22,26 +22,24 @@ var Welcome = React.createClass({
 	render: function () {
 		return (
 			<div>
-				<div className="first-main">
-					<div className="main-page-logo">Mello</div>
-					<h1 className="main-blurb">
-						Mello is the like totally free, flexible, and visual way to like organize stuff.
-					</h1>
+			<div className="first-main">
+				<div className="main-page-logo">POMO TODO</div>
+				<h1 className="main-blurb">
+					POMO TODO is the pomodorro app for goer on the go
+				</h1>
 
-					<button className="submit main-submit" onClick={this.goToSignUp}>
-						Sign Up it's like, FREE!
-					</button>
-					<br />
-					<button className="login" onClick={this.goToLogin}>
-						Login...
-					</button>
+				<div className="second-main">
+					<p>Log in or Sign up and get stuff done!</p>
+					<div className="welcome-page-1">
+						<SignUpForm />
+					</div>
+					<div className="welcome-page-2">
+						<LoginForm />
+					</div>
+					</div>
 				</div>
-				<div className="second-main"></div>
-
-				<footer>
-					if you are reading this, that means I'm already dead...
-				</footer>
 			</div>
+			
 		);
 
 	}

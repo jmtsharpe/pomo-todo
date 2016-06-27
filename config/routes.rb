@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   	resources :users
     resource :session
     resources :tasks
+    resources :timer, only: [:show]
   end
 
 end

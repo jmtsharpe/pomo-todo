@@ -6,14 +6,14 @@ module.exports = {
 
 	fetchAllTasks: function (userId) {
   
-    debugger
+    
     $.ajax({
       url: "api/tasks",
       method: "GET",
       dataType: "json",
       data: {userId: userId},
       success: function (tasks) {
-        debugger
+        
       
         TaskActions.receiveAllTasks(tasks);
       },
@@ -49,7 +49,7 @@ module.exports = {
   },
 
   deleteTask: function (task, user) {
-    debugger
+    
     $.ajax({
       url: "api/tasks/" + task.id,
       method: "DELETE",
@@ -76,14 +76,14 @@ module.exports = {
   },
 
   login: function(credentials, callback) {
-    debugger
+    
     $.ajax({
       type: "POST",
       url: "/api/session",
       dataType: "json",
       data: credentials,
       success: function(currentUser) {
-        debugger
+        
         SessionActions.currentUserReceived(currentUser);
         callback && callback();
       }

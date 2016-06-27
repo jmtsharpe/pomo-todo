@@ -52,8 +52,6 @@ var LoginForm = React.createClass({
 					</form>
 				</div>
 				<div>
-					<p>Don't have an account?</p>
-					<button className="submit" onClick={this.goToSignUp}>Sign Up!</button>
 				</div>
 			</main>
     );

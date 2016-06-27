@@ -72,11 +72,11 @@ var TaskIndexItem = React.createClass({
 			return (
 				<div className="task-list-padding">
 					<div className="task-list-item" >
-						<button onClick={this.deleteTask}>x</button>
-						<ul className="index-item-props group">
-							<li className="index-item-subject">{this.state.subject}</li>
-							<li className="index-item-pomodoros">pomodoros: {this.props.task.pomodoros}</li>
-						</ul>
+						<button className="delete-task-button material-icons" onClick={this.deleteTask}>X</button>
+						<div className="index-item-props group">
+							<p className="index-item-subject">{this.state.subject}</p>
+							<p className="index-item-pomodoros">pomodoros: {this.props.task.pomodoros}</p>
+						</div>
 						<button className="task-button" onClick={this.openEdit}>Edit</button>
 						<button className="task-button" onClick={this.showDetail}>Start</button>
 					</div>

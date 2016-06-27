@@ -52,24 +52,26 @@
 	var Router = __webpack_require__(168).Router;
 	var Route = __webpack_require__(168).Route;
 	var IndexRoute = __webpack_require__(168).IndexRoute;
-	var ApiUtil = __webpack_require__(230);
+	var ApiUtil = __webpack_require__(229);
 	var hashHistory = __webpack_require__(168).hashHistory;
 	
-	var TaskIndex = __webpack_require__(229);
-	var TaskIndexItem = __webpack_require__(237);
-	var TaskShow = __webpack_require__(260);
-	var App = __webpack_require__(262);
+	var TaskIndex = __webpack_require__(238);
+	var TaskIndexItem = __webpack_require__(239);
+	var TaskShow = __webpack_require__(264);
+	var App = __webpack_require__(265);
 	
-	var LoginForm = __webpack_require__(263);
-	var SignUpForm = __webpack_require__(264);
-	var Welcome = __webpack_require__(265);
+	var LoginForm = __webpack_require__(266);
+	var SignUpForm = __webpack_require__(267);
+	var Welcome = __webpack_require__(268);
+	var Timer = __webpack_require__(263);
 	
-	var SessionStore = __webpack_require__(266);
+	var SessionStore = __webpack_require__(241);
 	
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App, onEnter: _requireLoggedIn },
-	  React.createElement(Route, { path: 'tasks/:id', component: TaskShow, onEnter: _requireLoggedIn })
+	  React.createElement(Route, { path: 'tasks/:id', component: TaskShow, onEnter: _requireLoggedIn }),
+	  React.createElement(Route, { path: 'timer', component: Timer, onEnter: _requireLoggedIn })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -88,7 +90,6 @@
 	});
 	
 	function _requireLoggedIn(nextState, replace, asyncCompletionCallback) {
-	  debugger;
 	  if (!SessionStore.currentUserHasBeenFetched()) {
 	    ApiUtil.fetchCurrentUser(_redirectIfNotLoggedIn);
 	  } else {
@@ -25922,99 +25923,19 @@
 
 	'use strict';
 	
-	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
-	
-	var TaskIndexItem = __webpack_require__(237);
-	var TaskFormButton = __webpack_require__(258);
-	
-	var TaskStore = __webpack_require__(240);
-	var SessionStore = __webpack_require__(266);
-	
-	var TaskIndex = React.createClass({
-		displayName: 'TaskIndex',
-	
-	
-		getInitialState: function getInitialState() {
-			return { pressed: false, tasks: [] };
-		},
-	
-		isPressed: function isPressed() {
-			this.setState({ pressed: true });
-		},
-	
-		notPressed: function notPressed() {
-			this.setState({ pressed: false });
-		},
-	
-		componentDidMount: function componentDidMount() {
-			this.taskListener = TaskStore.addListener(this._onChange);
-			var user = SessionStore.currentUser();
-			ApiUtil.fetchAllTasks(user.id);
-		},
-	
-		_onChange: function _onChange() {
-			var tasks = TaskStore.all();
-			this.setState({ tasks: tasks });
-		},
-	
-		componentWillUnmount: function componentWillUnmount() {
-			this.taskListener.remove();
-		},
-	
-		render: function render() {
-			if (this.state.tasks.length > 0) {
-				var tasks = [];
-				this.state.tasks.map(function (task) {
-					tasks.push(React.createElement(
-						'li',
-						{ className: 'task-list-item-container' },
-						React.createElement(TaskIndexItem, { task: task })
-					));
-				});
-			};
-			return React.createElement(
-				'li',
-				{ className: 'task-index-container group' },
-				React.createElement(
-					'div',
-					{ className: 'task-index' },
-					React.createElement(
-						'ul',
-						null,
-						tasks
-					),
-					React.createElement(TaskFormButton, {
-						className: 'task-creation-div'
-					})
-				)
-			);
-		}
-	});
-	
-	module.exports = TaskIndex;
-
-/***/ },
-/* 230 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var TaskActions = __webpack_require__(231);
-	var SessionActions = __webpack_require__(268);
+	var TaskActions = __webpack_require__(230);
+	var SessionActions = __webpack_require__(236);
 	
 	module.exports = {
 	
 	  fetchAllTasks: function fetchAllTasks(userId) {
 	
-	    debugger;
 	    $.ajax({
 	      url: "api/tasks",
 	      method: "GET",
 	      dataType: "json",
 	      data: { userId: userId },
 	      success: function success(tasks) {
-	        debugger;
 	
 	        TaskActions.receiveAllTasks(tasks);
 	      },
@@ -26050,7 +25971,7 @@
 	  },
 	
 	  deleteTask: function deleteTask(task, user) {
-	    debugger;
+	
 	    $.ajax({
 	      url: "api/tasks/" + task.id,
 	      method: "DELETE",
@@ -26077,14 +25998,14 @@
 	  },
 	
 	  login: function login(credentials, callback) {
-	    debugger;
+	
 	    $.ajax({
 	      type: "POST",
 	      url: "/api/session",
 	      dataType: "json",
 	      data: credentials,
 	      success: function success(currentUser) {
-	        debugger;
+	
 	        SessionActions.currentUserReceived(currentUser);
 	        callback && callback();
 	      }
@@ -26120,13 +26041,13 @@
 	};
 
 /***/ },
-/* 231 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Dispatcher = __webpack_require__(232);
-	var TaskConstants = __webpack_require__(236);
+	var Dispatcher = __webpack_require__(231);
+	var TaskConstants = __webpack_require__(235);
 	
 	module.exports = {
 	  receiveAllTasks: function receiveAllTasks(tasks) {
@@ -26145,16 +26066,16 @@
 	};
 
 /***/ },
-/* 232 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Dispatcher = __webpack_require__(233).Dispatcher;
+	var Dispatcher = __webpack_require__(232).Dispatcher;
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 233 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26166,11 +26087,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(234);
+	module.exports.Dispatcher = __webpack_require__(233);
 
 
 /***/ },
-/* 234 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26192,7 +26113,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	var _prefix = 'ID_';
 	
@@ -26407,7 +26328,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 235 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26462,7 +26383,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 236 */
+/* 235 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26473,20 +26394,142 @@
 	};
 
 /***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var AppDispatcher = __webpack_require__(231);
+	var SessionConstants = __webpack_require__(237);
+	
+	var SessionActions = {
+	
+	  currentUserReceived: function currentUserReceived(currentUser) {
+	    AppDispatcher.dispatch({
+	      actionType: SessionConstants.CURRENT_USER_RECEIVED,
+	      currentUser: currentUser
+	    });
+	  },
+	
+	  logout: function logout() {
+	    AppDispatcher.dispatch({
+	      actionType: SessionConstants.LOGOUT
+	    });
+	  }
+	};
+	
+	module.exports = SessionActions;
+
+/***/ },
 /* 237 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  CURRENT_USER_RECEIVED: "CURRENT_USER_RECEIVED",
+	  LOGOUT: "LOGOUT"
+	};
+
+/***/ },
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var TaskEditForm = __webpack_require__(238);
-	var SessionStore = __webpack_require__(266);
+	var ApiUtil = __webpack_require__(229);
 	
-	var enhanceWithClickOutside = __webpack_require__(239);
+	var TaskIndexItem = __webpack_require__(239);
+	var TaskFormButton = __webpack_require__(261);
 	
-	var ApiUtil = __webpack_require__(230);
+	var TaskStore = __webpack_require__(260);
+	var SessionStore = __webpack_require__(241);
+	var Timer = __webpack_require__(263);
 	
-	var TaskStore = __webpack_require__(240);
+	var TaskIndex = React.createClass({
+		displayName: 'TaskIndex',
+	
+	
+		contextTypes: {
+			router: React.PropTypes.object.isRequired
+		},
+	
+		getInitialState: function getInitialState() {
+			return { pressed: false, tasks: [] };
+		},
+	
+		isPressed: function isPressed() {
+			this.setState({ pressed: true });
+		},
+	
+		notPressed: function notPressed() {
+			this.setState({ pressed: false });
+		},
+	
+		componentDidMount: function componentDidMount() {
+			this.taskListener = TaskStore.addListener(this._onChange);
+			var user = SessionStore.currentUser();
+			ApiUtil.fetchAllTasks(user.id);
+		},
+	
+		_onChange: function _onChange() {
+			var tasks = TaskStore.all();
+			this.setState({ tasks: tasks });
+		},
+	
+		componentWillUnmount: function componentWillUnmount() {
+			this.taskListener.remove();
+		},
+	
+		render: function render() {
+			if (this.state.tasks.length > 0) {
+				var tasks = [];
+				this.state.tasks.map(function (task) {
+					tasks.push(React.createElement(
+						'li',
+						{ className: 'task-list-item-container' },
+						React.createElement(TaskIndexItem, { task: task })
+					));
+				});
+			};
+	
+			return React.createElement(
+				'li',
+				{ className: 'task-index-container group' },
+				React.createElement(
+					'div',
+					{ className: 'task-index' },
+					React.createElement(
+						'ul',
+						null,
+						tasks
+					),
+					React.createElement(TaskFormButton, {
+						className: 'task-creation-div'
+					})
+				)
+			);
+		}
+	});
+	
+	module.exports = TaskIndex;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var TaskEditForm = __webpack_require__(240);
+	var SessionStore = __webpack_require__(241);
+	
+	var enhanceWithClickOutside = __webpack_require__(259);
+	
+	var ApiUtil = __webpack_require__(229);
+	
+	var TaskStore = __webpack_require__(260);
 	
 	var TaskIndexItem = React.createClass({
 		displayName: 'TaskIndexItem',
@@ -26557,19 +26600,19 @@
 						{ className: 'task-list-item' },
 						React.createElement(
 							'button',
-							{ onClick: this.deleteTask },
-							'x'
+							{ className: 'delete-task-button material-icons', onClick: this.deleteTask },
+							'X'
 						),
 						React.createElement(
-							'ul',
+							'div',
 							{ className: 'index-item-props group' },
 							React.createElement(
-								'li',
+								'p',
 								{ className: 'index-item-subject' },
 								this.state.subject
 							),
 							React.createElement(
-								'li',
+								'p',
 								{ className: 'index-item-pomodoros' },
 								'pomodoros: ',
 								this.props.task.pomodoros
@@ -26635,13 +26678,13 @@
 	module.exports = enhanceWithClickOutside(TaskIndexItem);
 
 /***/ },
-/* 238 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
+	var ApiUtil = __webpack_require__(229);
 	
 	var EditTaskForm = React.createClass({
 	  displayName: 'EditTaskForm',
@@ -26704,114 +26747,50 @@
 	module.exports = EditTaskForm;
 
 /***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(38);
-	
-	module.exports = function enhanceWithClickOutside(WrappedComponent) {
-	  var componentName = WrappedComponent.displayName || WrappedComponent.name;
-	
-	  return React.createClass({
-	    displayName: 'Wrapped' + componentName,
-	
-	    componentDidMount: function componentDidMount() {
-	      this.__wrappedComponent = this.refs.wrappedComponent;
-	      document.addEventListener('click', this.handleClickOutside, true);
-	    },
-	
-	    componentWillUnmount: function componentWillUnmount() {
-	      document.removeEventListener('click', this.handleClickOutside, true);
-	    },
-	
-	    handleClickOutside: function handleClickOutside(e) {
-	      var domNode = ReactDOM.findDOMNode(this);
-	      if ((!domNode || !domNode.contains(e.target)) && typeof this.refs.wrappedComponent.handleClickOutside === 'function') {
-	        this.refs.wrappedComponent.handleClickOutside(e);
-	      }
-	    },
-	
-	    render: function render() {
-	      return React.createElement(WrappedComponent, _extends({}, this.props, { ref: 'wrappedComponent' }));
-	    }
-	  });
-	};
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(241).Store;
-	var AppDispatcher = __webpack_require__(232);
-	var TaskConstants = __webpack_require__(236);
-	var TaskStore = new Store(AppDispatcher);
-	
-	module.exports = TaskStore;
-	
-	var _tasks = {};
-	
-	var resetTasks = function resetTasks(tasks) {
-	  _tasks = {};
-	  tasks.forEach(function (task) {
-	    _tasks[task.id] = task;
-	  });
-	};
-	
-	var resetTask = function resetTask(task) {
-	  _tasks[task.id] = task;
-	};
-	
-	TaskStore.all = function () {
-	  debugger;
-	  var tasks = [];
-	  for (var id in _tasks) {
-	    if (_tasks.hasOwnProperty(id)) {
-	      tasks.push(_tasks[id]);
-	    }
-	  }
-	
-	  tasks = Object.keys(_tasks).map(function (task_id) {
-	    return _tasks[task_id];
-	  });
-	  return tasks;
-	};
-	
-	TaskStore.find = function (id) {
-	  return _tasks[id];
-	};
-	
-	TaskStore.findMine = function (cardId) {
-	  return _tasks[cardId];
-	};
-	
-	TaskStore.eat = function (tasks, card) {
-	  _tasks[card] = tasks;
-	};
-	
-	TaskStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case TaskConstants.TASKS_RECEIVED:
-	      resetTasks(payload.tasks);
-	      TaskStore.__emitChange();
-	      break;
-	    case TaskConstants.TASK_RECEIVED:
-	      resetTask(payload.task);
-	      TaskStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	module.exports = TaskStore;
-
-/***/ },
 /* 241 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(242).Store;
+	var SessionConstants = __webpack_require__(237);
+	var AppDispatcher = __webpack_require__(231);
+	
+	var SessionStore = new Store(AppDispatcher);
+	
+	var _currentUser;
+	var _currentUserHasBeenFetched = false;
+	
+	SessionStore.currentUser = function () {
+	  return _currentUser;
+	};
+	
+	SessionStore.isLoggedIn = function () {
+	  return !!_currentUser;
+	};
+	
+	SessionStore.currentUserHasBeenFetched = function () {
+	  return _currentUserHasBeenFetched;
+	};
+	
+	SessionStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case SessionConstants.CURRENT_USER_RECEIVED:
+	      _currentUser = payload.currentUser;
+	      _currentUserHasBeenFetched = true;
+	      SessionStore.__emitChange();
+	      break;
+	    case SessionConstants.LOGOUT:
+	      _currentUser = null;
+	      SessionStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = SessionStore;
+
+/***/ },
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26823,15 +26802,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(242);
-	module.exports.MapStore = __webpack_require__(245);
-	module.exports.Mixin = __webpack_require__(257);
-	module.exports.ReduceStore = __webpack_require__(246);
-	module.exports.Store = __webpack_require__(247);
+	module.exports.Container = __webpack_require__(243);
+	module.exports.MapStore = __webpack_require__(246);
+	module.exports.Mixin = __webpack_require__(258);
+	module.exports.ReduceStore = __webpack_require__(247);
+	module.exports.Store = __webpack_require__(248);
 
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26853,10 +26832,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(243);
+	var FluxStoreGroup = __webpack_require__(244);
 	
-	var invariant = __webpack_require__(235);
-	var shallowEqual = __webpack_require__(244);
+	var invariant = __webpack_require__(234);
+	var shallowEqual = __webpack_require__(245);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -27014,7 +26993,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27033,7 +27012,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -27095,7 +27074,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports) {
 
 	/**
@@ -27150,7 +27129,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27171,10 +27150,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(246);
-	var Immutable = __webpack_require__(256);
+	var FluxReduceStore = __webpack_require__(247);
+	var Immutable = __webpack_require__(257);
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -27300,7 +27279,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27321,10 +27300,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(247);
+	var FluxStore = __webpack_require__(248);
 	
-	var abstractMethod = __webpack_require__(255);
-	var invariant = __webpack_require__(235);
+	var abstractMethod = __webpack_require__(256);
+	var invariant = __webpack_require__(234);
 	
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -27407,7 +27386,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27426,11 +27405,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(248);
+	var _require = __webpack_require__(249);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -27590,7 +27569,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27603,14 +27582,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(249)
+	  EventEmitter: __webpack_require__(250)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27629,11 +27608,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(250);
-	var EventSubscriptionVendor = __webpack_require__(252);
+	var EmitterSubscription = __webpack_require__(251);
+	var EventSubscriptionVendor = __webpack_require__(253);
 	
-	var emptyFunction = __webpack_require__(254);
-	var invariant = __webpack_require__(253);
+	var emptyFunction = __webpack_require__(255);
+	var invariant = __webpack_require__(254);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -27807,7 +27786,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27828,7 +27807,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(251);
+	var EventSubscription = __webpack_require__(252);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -27860,7 +27839,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports) {
 
 	/**
@@ -27914,7 +27893,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27933,7 +27912,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(253);
+	var invariant = __webpack_require__(254);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -28023,7 +28002,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28078,7 +28057,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -28120,7 +28099,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28137,7 +28116,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -28147,7 +28126,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33131,7 +33110,7 @@
 	}));
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -33148,9 +33127,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(243);
+	var FluxStoreGroup = __webpack_require__(244);
 	
-	var invariant = __webpack_require__(235);
+	var invariant = __webpack_require__(234);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -33254,7 +33233,113 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 258 */
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(38);
+	
+	module.exports = function enhanceWithClickOutside(WrappedComponent) {
+	  var componentName = WrappedComponent.displayName || WrappedComponent.name;
+	
+	  return React.createClass({
+	    displayName: 'Wrapped' + componentName,
+	
+	    componentDidMount: function componentDidMount() {
+	      this.__wrappedComponent = this.refs.wrappedComponent;
+	      document.addEventListener('click', this.handleClickOutside, true);
+	    },
+	
+	    componentWillUnmount: function componentWillUnmount() {
+	      document.removeEventListener('click', this.handleClickOutside, true);
+	    },
+	
+	    handleClickOutside: function handleClickOutside(e) {
+	      var domNode = ReactDOM.findDOMNode(this);
+	      if ((!domNode || !domNode.contains(e.target)) && typeof this.refs.wrappedComponent.handleClickOutside === 'function') {
+	        this.refs.wrappedComponent.handleClickOutside(e);
+	      }
+	    },
+	
+	    render: function render() {
+	      return React.createElement(WrappedComponent, _extends({}, this.props, { ref: 'wrappedComponent' }));
+	    }
+	  });
+	};
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(242).Store;
+	var AppDispatcher = __webpack_require__(231);
+	var TaskConstants = __webpack_require__(235);
+	var TaskStore = new Store(AppDispatcher);
+	
+	module.exports = TaskStore;
+	
+	var _tasks = {};
+	
+	var resetTasks = function resetTasks(tasks) {
+	  _tasks = {};
+	  tasks.forEach(function (task) {
+	    _tasks[task.id] = task;
+	  });
+	};
+	
+	var resetTask = function resetTask(task) {
+	  _tasks[task.id] = task;
+	};
+	
+	TaskStore.all = function () {
+	  var tasks = [];
+	  for (var id in _tasks) {
+	    if (_tasks.hasOwnProperty(id)) {
+	      tasks.push(_tasks[id]);
+	    }
+	  }
+	
+	  tasks = Object.keys(_tasks).map(function (task_id) {
+	    return _tasks[task_id];
+	  });
+	  return tasks;
+	};
+	
+	TaskStore.find = function (id) {
+	  return _tasks[id];
+	};
+	
+	TaskStore.findMine = function (cardId) {
+	  return _tasks[cardId];
+	};
+	
+	TaskStore.eat = function (tasks, card) {
+	  _tasks[card] = tasks;
+	};
+	
+	TaskStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case TaskConstants.TASKS_RECEIVED:
+	      resetTasks(payload.tasks);
+	      TaskStore.__emitChange();
+	      break;
+	    case TaskConstants.TASK_RECEIVED:
+	      resetTask(payload.task);
+	      TaskStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = TaskStore;
+
+/***/ },
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33264,11 +33349,11 @@
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var React = __webpack_require__(1);
-	var TaskForm = __webpack_require__(259);
-	var ApiUtil = __webpack_require__(230);
-	var SessionStore = __webpack_require__(266);
+	var TaskForm = __webpack_require__(262);
+	var ApiUtil = __webpack_require__(229);
+	var SessionStore = __webpack_require__(241);
 	
-	var enhanceWithClickOutside = __webpack_require__(239);
+	var enhanceWithClickOutside = __webpack_require__(259);
 	
 	// var OnClickOutside = require('react-onclickoutside');
 	
@@ -33308,7 +33393,7 @@
 	      'button',
 	      { className: 'task-creation-button', onClick: this.isPressed },
 	      React.createElement(
-	        'p',
+	        'div',
 	        null,
 	        'Add a task..'
 	      )
@@ -33358,14 +33443,14 @@
 	module.exports = enhanceWithClickOutside(TaskFormButton);
 
 /***/ },
-/* 259 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
-	var SessionStore = __webpack_require__(266);
+	var ApiUtil = __webpack_require__(229);
+	var SessionStore = __webpack_require__(241);
 	
 	var TaskForm = React.createClass({
 	  displayName: 'TaskForm',
@@ -33429,72 +33514,14 @@
 	module.exports = TaskForm;
 
 /***/ },
-/* 260 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
-	var TaskStore = __webpack_require__(240);
-	var Timer = __webpack_require__(261);
-	var SessionStore = __webpack_require__(266);
-	
-	var ShowTask = React.createClass({
-		displayName: 'ShowTask',
-	
-		getInitialState: function getInitialState() {
-			return { task: TaskStore.find(this.props.params.id) };
-		},
-	
-		_onChange: function _onChange() {
-			debugger;
-			this.setState({
-				task: TaskStore.find(this.props.params.id)
-			});
-		},
-	
-		componentWillReceiveProps: function componentWillReceiveProps(newProps) {
-			this.setState({ task: TaskStore.find(this.props.params.id) });
-		},
-	
-		componentDidMount: function componentDidMount() {
-			debugger;
-			this.taskListener = TaskStore.addListener(this._onChange);
-		},
-	
-		componentWillUnmount: function componentWillUnmount() {
-			this.taskListener.remove();
-		},
-	
-		render: function render() {
-			debugger;
-			if (this.state.task) {
-				return React.createElement(
-					'div',
-					{ className: 'task-container group' },
-					React.createElement(Timer, { task: this.state.task })
-				);
-			};
-			return React.createElement(
-				'div',
-				null,
-				'Task Show Page'
-			);
-		}
-	});
-	
-	module.exports = ShowTask;
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
-	var SessionStore = __webpack_require__(266);
+	var ApiUtil = __webpack_require__(229);
+	var SessionStore = __webpack_require__(241);
 	var Timer = React.createClass({
 		displayName: 'Timer',
 	
@@ -33506,7 +33533,7 @@
 		getInitialState: function getInitialState() {
 			return {
 				minutes: 0,
-				seconds: 15,
+				seconds: 5,
 				paused: true,
 				started: false,
 				modal: false,
@@ -33543,7 +33570,9 @@
 					this.setState({ seconds: seconds });
 				} else {
 					this.endTime();
-					this.removePomodoro();
+					if (this.props.task) {
+						this.removePomodoro();
+					};
 				};
 			};
 		},
@@ -33588,6 +33617,10 @@
 				progress: 1500,
 				alarm: false
 			});
+		},
+	
+		closeTimer: function closeTimer() {
+			this.context.router.push('/');
 		},
 	
 		deleteTask: function deleteTask() {
@@ -33692,55 +33725,71 @@
 				);
 			}
 	
+			var subject = "Let's do a task!";
+			var pomodoros = "";
+			if (this.props.task) {
+				subject = this.props.task.subject;
+				pomodoros = this.props.task.pomodoros;
+			};
+	
 			return React.createElement(
 				'div',
 				{ className: 'timer-container' },
 				React.createElement(
 					'div',
 					{ className: 'pomodoro-container' },
-					this.props.task.subject,
+					subject,
 					React.createElement(
-						'ul',
-						{ className: 'pomodoro' },
+						'div',
+						{ className: 'clock' },
 						React.createElement(
-							'li',
-							null,
+							'ul',
+							{ className: 'pomodoro' },
 							React.createElement(
-								'div',
+								'li',
 								null,
 								React.createElement(
 									'div',
-									{ className: 'leaves' },
-									React.createElement('div', { className: 'leaf-1' }),
-									React.createElement('div', { className: 'leaf-2' }),
-									React.createElement('div', { className: 'leaf-3' }),
-									React.createElement('div', { className: 'leaf-4' }),
-									React.createElement('div', { className: 'leaf-5' })
+									null,
+									React.createElement(
+										'div',
+										{ className: 'leaves' },
+										React.createElement('div', { className: 'leaf-1' }),
+										React.createElement('div', { className: 'leaf-2' }),
+										React.createElement('div', { className: 'leaf-3' }),
+										React.createElement('div', { className: 'leaf-4' }),
+										React.createElement('div', { className: 'leaf-5' })
+									)
+								)
+							),
+							React.createElement(
+								'li',
+								null,
+								React.createElement(
+									'div',
+									{ className: 'pomodoro-count' },
+									pomodoros
 								)
 							)
 						),
 						React.createElement(
-							'li',
-							null,
-							React.createElement(
-								'div',
-								{ className: 'pomodoro-count' },
-								this.props.task.pomodoros
-							)
-						)
-					),
-					React.createElement(
-						'div',
-						{ className: 'clock' },
-						minutes,
-						':',
-						seconds,
+							'div',
+							{ className: 'time' },
+							minutes,
+							':',
+							seconds
+						),
 						React.createElement(
 							'div',
 							{ className: 'progress-bar' },
 							React.createElement('div', { className: 'progress-bar-cover', style: progressBarCover }),
 							React.createElement('div', { className: 'progress-bar-1', style: rotater }),
 							React.createElement('div', { className: 'progress-blank' })
+						),
+						React.createElement(
+							'button',
+							{ className: 'close-timer-button', onClick: this.closeTimer },
+							'X'
 						)
 					),
 					button
@@ -33755,17 +33804,73 @@
 	module.exports = Timer;
 
 /***/ },
-/* 262 */
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ApiUtil = __webpack_require__(229);
+	var TaskStore = __webpack_require__(260);
+	var Timer = __webpack_require__(263);
+	var SessionStore = __webpack_require__(241);
+	
+	var ShowTask = React.createClass({
+		displayName: 'ShowTask',
+	
+		getInitialState: function getInitialState() {
+			return { task: TaskStore.find(this.props.params.id) };
+		},
+	
+		_onChange: function _onChange() {
+			this.setState({
+				task: TaskStore.find(this.props.params.id)
+			});
+		},
+	
+		componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+			this.setState({ task: TaskStore.find(this.props.params.id) });
+		},
+	
+		componentDidMount: function componentDidMount() {
+	
+			this.taskListener = TaskStore.addListener(this._onChange);
+		},
+	
+		componentWillUnmount: function componentWillUnmount() {
+			this.taskListener.remove();
+		},
+	
+		render: function render() {
+			if (this.state.task) {
+				return React.createElement(
+					'div',
+					{ className: 'task-container group' },
+					React.createElement(Timer, { task: this.state.task })
+				);
+			};
+			return React.createElement(
+				'div',
+				null,
+				'Task Show Page'
+			);
+		}
+	});
+	
+	module.exports = ShowTask;
+
+/***/ },
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(168).History;
-	var TaskStore = __webpack_require__(240);
+	var TaskStore = __webpack_require__(260);
 	
-	var ApiUtil = __webpack_require__(230);
-	var TaskIndex = __webpack_require__(229);
+	var ApiUtil = __webpack_require__(229);
+	var TaskIndex = __webpack_require__(238);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -33786,6 +33891,10 @@
 	    ApiUtil.logout(function () {
 	      this.context.router.push("/welcome");
 	    }.bind(this));
+	  },
+	
+	  openTimer: function openTimer() {
+	    this.context.router.push('timer');
 	  },
 	
 	  render: function render() {
@@ -33814,8 +33923,58 @@
 	      React.createElement(
 	        'main',
 	        { className: 'main' },
-	        this.props.children,
-	        React.createElement(TaskIndex, null)
+	        React.createElement(
+	          'ul',
+	          { className: 'main-list group' },
+	          React.createElement(
+	            'li',
+	            { className: 'main-child' },
+	            React.createElement(
+	              'div',
+	              null,
+	              React.createElement(
+	                'h1',
+	                null,
+	                'Welcome to Pomo Todo'
+	              ),
+	              React.createElement(
+	                'p',
+	                null,
+	                'Make tasks and assign 25 minute timers called "Pomodoros"'
+	              ),
+	              React.createElement(
+	                'p',
+	                null,
+	                'Assign as many Pomodoros as you think you need to complete the task'
+	              ),
+	              React.createElement(
+	                'p',
+	                null,
+	                ' Or just start a timer and get to it.'
+	              ),
+	              React.createElement(
+	                'h2',
+	                null,
+	                'LET\'S POMO DO IT!'
+	              )
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'open-timer-button', onClick: this.openTimer },
+	              'Start a timer'
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'main-task-index' },
+	            React.createElement(
+	              'div',
+	              null,
+	              React.createElement(TaskIndex, null)
+	            )
+	          )
+	        ),
+	        this.props.children
 	      )
 	    );
 	  }
@@ -33824,14 +33983,14 @@
 	module.exports = App;
 
 /***/ },
-/* 263 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
-	var SignUpForm = __webpack_require__(264);
+	var ApiUtil = __webpack_require__(229);
+	var SignUpForm = __webpack_require__(267);
 	
 	var LoginForm = React.createClass({
 	  displayName: 'LoginForm',
@@ -33903,20 +34062,7 @@
 	          )
 	        )
 	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'p',
-	          null,
-	          'Don\'t have an account?'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'submit', onClick: this.goToSignUp },
-	          'Sign Up!'
-	        )
-	      )
+	      React.createElement('div', null)
 	    );
 	  },
 	
@@ -33943,13 +34089,13 @@
 	module.exports = LoginForm;
 
 /***/ },
-/* 264 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ApiUtil = __webpack_require__(230);
+	var ApiUtil = __webpack_require__(229);
 	
 	var SignUpForm = React.createClass({
 	  displayName: 'SignUpForm',
@@ -34019,34 +34165,6 @@
 	            { className: 'submit' },
 	            'Submit'
 	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'sign-up-form' },
-	          React.createElement(
-	            'h2',
-	            { className: 'sign-up-header' },
-	            'Have a Google account?'
-	          ),
-	          React.createElement(
-	            'button',
-	            { className: 'submit' },
-	            'Sign up with Google'
-	          )
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'p',
-	          null,
-	          'Already have a Mello acount?'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'login', onClick: this.goToLogin },
-	          'Login...'
 	        )
 	      )
 	    );
@@ -34082,16 +34200,16 @@
 	module.exports = SignUpForm;
 
 /***/ },
-/* 265 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(168).History;
-	var ApiUtil = __webpack_require__(230);
-	var SignUpForm = __webpack_require__(264);
-	var LoginForm = __webpack_require__(263);
+	var ApiUtil = __webpack_require__(229);
+	var SignUpForm = __webpack_require__(267);
+	var LoginForm = __webpack_require__(266);
 	
 	var Welcome = React.createClass({
 		displayName: 'Welcome',
@@ -34119,30 +34237,32 @@
 					React.createElement(
 						'div',
 						{ className: 'main-page-logo' },
-						'Mello'
+						'POMO TODO'
 					),
 					React.createElement(
 						'h1',
 						{ className: 'main-blurb' },
-						'Mello is the like totally free, flexible, and visual way to like organize stuff.'
+						'POMO TODO is the pomodorro app for goer on the go'
 					),
 					React.createElement(
-						'button',
-						{ className: 'submit main-submit', onClick: this.goToSignUp },
-						'Sign Up it\'s like, FREE!'
-					),
-					React.createElement('br', null),
-					React.createElement(
-						'button',
-						{ className: 'login', onClick: this.goToLogin },
-						'Login...'
+						'div',
+						{ className: 'second-main' },
+						React.createElement(
+							'p',
+							null,
+							'Log in or Sign up and get stuff done!'
+						),
+						React.createElement(
+							'div',
+							{ className: 'welcome-page-1' },
+							React.createElement(SignUpForm, null)
+						),
+						React.createElement(
+							'div',
+							{ className: 'welcome-page-2' },
+							React.createElement(LoginForm, null)
+						)
 					)
-				),
-				React.createElement('div', { className: 'second-main' }),
-				React.createElement(
-					'footer',
-					null,
-					'if you are reading this, that means I\'m already dead...'
 				)
 			);
 		}
@@ -34150,87 +34270,6 @@
 	});
 	
 	module.exports = Welcome;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(241).Store;
-	var SessionConstants = __webpack_require__(267);
-	var AppDispatcher = __webpack_require__(232);
-	
-	var SessionStore = new Store(AppDispatcher);
-	
-	var _currentUser;
-	var _currentUserHasBeenFetched = false;
-	
-	SessionStore.currentUser = function () {
-	  return _currentUser;
-	};
-	
-	SessionStore.isLoggedIn = function () {
-	  return !!_currentUser;
-	};
-	
-	SessionStore.currentUserHasBeenFetched = function () {
-	  return _currentUserHasBeenFetched;
-	};
-	
-	SessionStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case SessionConstants.CURRENT_USER_RECEIVED:
-	      _currentUser = payload.currentUser;
-	      _currentUserHasBeenFetched = true;
-	      SessionStore.__emitChange();
-	      break;
-	    case SessionConstants.LOGOUT:
-	      _currentUser = null;
-	      SessionStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	module.exports = SessionStore;
-
-/***/ },
-/* 267 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  CURRENT_USER_RECEIVED: "CURRENT_USER_RECEIVED",
-	  LOGOUT: "LOGOUT"
-	};
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var AppDispatcher = __webpack_require__(232);
-	var SessionConstants = __webpack_require__(267);
-	
-	var SessionActions = {
-	
-	  currentUserReceived: function currentUserReceived(currentUser) {
-	    AppDispatcher.dispatch({
-	      actionType: SessionConstants.CURRENT_USER_RECEIVED,
-	      currentUser: currentUser
-	    });
-	  },
-	
-	  logout: function logout() {
-	    AppDispatcher.dispatch({
-	      actionType: SessionConstants.LOGOUT
-	    });
-	  }
-	};
-	
-	module.exports = SessionActions;
 
 /***/ }
 /******/ ]);

@@ -8,12 +8,17 @@ var TaskFormButton = require('./../tasks/formButton');
 
 var TaskStore = require('./../../stores/task');
 var SessionStore = require('./../../stores/session.js');
+var Timer = require('./../pomodoro/timer.jsx');
 
 
 var TaskIndex = React.createClass({
 
+	contextTypes: {
+      router: React.PropTypes.object.isRequired
+    },
+
 	getInitialState: function () {
-		return ({ pressed: false, tasks: [] });
+		return ({ pressed: false, tasks: []});
 	},
 
 	isPressed: function () {
@@ -46,19 +51,22 @@ var TaskIndex = React.createClass({
 				tasks.push(<li className="task-list-item-container"><TaskIndexItem  task={task} /></li>)
 				
 			});
-  		}; 
+  		};
+
 		return ( 
-			<li className="task-index-container group" >
-				<div className="task-index" >
-					<ul>
-						{tasks}
-					</ul>
-					<TaskFormButton
-						className="task-creation-div"
-					/>
-				</div>
-			</li>
-		);
+				<li className="task-index-container group" >
+					<div className="task-index" >
+						<ul>
+							{tasks}
+						</ul>
+						<TaskFormButton
+							className="task-creation-div"
+						/>
+					</div>
+				</li>
+			);
+
+
 	}	
   }
 );

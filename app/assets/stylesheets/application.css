@@ -1,3 +1,12 @@
+colors {
+	black: rgb(1,22,39);
+	white: rgb(253,255,252);
+	teal: rgb(46,196,182);
+	red: rgb(231,29,54);
+	yellow-orange: rgb(253,159,28);
+
+}
+
 /*/ RESET /*/
 
 html, body, header, nav, h1, a, ul, li,
@@ -20,8 +29,8 @@ button, article, footer, small {
 }
 
 body {
-	background: #D6CFC9;
-	color: white;
+	background: rgb(253,255,252);
+	color: rgb(1,22,39);
 	font-family: sans-serif;
 }
 
@@ -29,10 +38,46 @@ button:hover {
 	cursor: pointer;
 }
 
+ /*/ CLEARFIX /*/
+
+.group:after {
+   content: "";
+   clear: both;
+   display: block;
+ }
+
 .main {
-	max-width: 900px;
+
 	margin: auto;
 	text-align: center;
+}
+
+.main-list {
+	display: table;
+	margin: auto;
+	width: 100%;
+	height: auto;
+}
+
+.main-list li {
+	display:inline-block;
+	vertical-align: top;
+	text-align: center;
+	margin: auto;
+}
+
+.main-task-index {
+	min-height: 500px;
+	width: 600px;
+	max-width: 100%;
+}
+
+.main-child {
+	padding: 2em 2em;
+}
+
+.main-child h2, p, h1 {
+	padding: 10px;
 }
 
 /*/ /*/ /*/ ----header---- /*/ /*/ /*/
@@ -47,9 +92,10 @@ button:hover {
 	text-align: center;
 	width: 100%;
 
-	background: #E34819;
+	background: rgb(253,255,252);
 	font-size: 20px;
 	margin-bottom: 20px;
+	color: rgb(231,29,54);
 }
 
 .over-head-logo {
@@ -62,31 +108,48 @@ button:hover {
 	margin: auto;
 	text-align: center;
 	display: inline-block;
-	max-width: 600px;
+	float: left;
+	width: 100%
 }
 
 .task-index {
 	margin: auto;
 	text-align: center;
+	float: left;
+	background: white;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	padding-bottom: 30px;
+	/*box-shadow: 0px 2px 2px #555555;*/
 }
 
 /*/ /*/ /*/ task index item styling /*/ /*/ /*/
 
 .task-list-padding {
 
-	background: #E34819;
+	background: white;
 
 	padding: 10px;
 
 	margin: 10px;
+	border-bottom: 1px solid gray;
 
-	box-shadow: 0px 2px 2px #555555;
+}
 
+.task-index-container {
+	height: 100%;
 }
 
 
 .task-index-item {
 	margin: auto;
+}
+
+.task-list-item {
+	font-size: 1em;
+	color: rgb(1,22,39);
+
 }
 
 .task-list-item-container {
@@ -98,24 +161,30 @@ button:hover {
 	width: 100px;
 	padding: 10px;
 	margin: 10px;
-	background: #D6CFC9;
+}
+
+.task-button:hover {
+	width: 100px;
 	border-radius: 3px;
+	border: 1px solid rgb(1,22,39);
+	margin: 9px;
 }
 
-.index-item-props {
-
+.delete-task-button {
+	float: right;
+	padding: 5px;
 }
 
-.index-item-subject {
-}
-
-.index-item-pomodoros {
+.delete-task-button:hover {
+	border: 1px solid rgb(1,22,39);
+	padding: 4px;
+	border-radius: 3px;
 }
 
 /*/ task creation /*/
 
-.task-creation-button {
-	background: #E34819;
+.task-creation-button, .open-timer-button {
+	background: rgb(231,29,54);
 
 	color: white;
 
@@ -131,29 +200,39 @@ button:hover {
 
 }
 
+.task-creation-button:hover {
+	background: rgb(1,22,39);
+	color: rgb(253,255,252);
+}
+
+.open-timer-button:hover {
+	background: rgb(1,22,39);
+	color: rgb(253,255,252);
+}
 
 
 .task-form-field {
-	background: white;
-	color: black;
+	background: rgb(253,255,252);
+	color: rgb(1,22,39);
+	border: 1px solid rgb(1,22,39);
 	border-radius: 3px;
 	padding: 5px;
 	text-align: left;
 }
 
 .pomo-number {
-
+	border: 1px solid rgb(1,22,39);
 }
 
 .create-form {
-	background: #E34819;
+	background: rgb(253,255,252);
 	margin: auto;
 	margin-top: 20px;
 
 	padding: 10px;
 
 	width: 360px;
-	box-shadow: 0px 2px 2px #555555;
+	box-shadow: 0px 2px 2px rgb(1,22,39);
 
 }
 
@@ -163,17 +242,27 @@ button:hover {
 }
 
 .submit {
-	background: #D6CFC9;
+	background: rgb(231,29,54);
+	color: rgb(253,255,252);
 	padding: 5px 20px;
 	margin: 10px;
 	border-radius: 3px;
 }
+
+.submit:hover {
+	background: rgb(1,22,39);
+	color: rgb(1,22,39);
+	margin: 10px;
+	border-radius: 3px;
+}
+
 
 /*/ /*/ /*/ ----task display---- /*/ /*/ /*/
 
 .task-container {
 	margin: auto;
 	text-align: center;
+	width: 600px;
 }
 
 
@@ -181,9 +270,17 @@ button:hover {
 /*/ /*/ /*/ ----timer---- /*/ /*/ /*/
 
 .pomodoro-container {
-	position: relative;
+	padding-top: 200px;
+	position: fixed;
 	margin: auto;
-	max-width: 400px;
+	width: auto;
+	background: rgba(253,255,252,.95);
+	z-index: 10;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+
 }
 
 .pomodoro-count {
@@ -197,13 +294,13 @@ button:hover {
 	position: absolute;
 	width: 5px;
 	height: 5px;
-	background: #E34819;
+	background: rgb(231,29,54);
 	border-radius: 100%;
 	padding: 5px;
 	margin: auto;
 
-	right: 200px;
-	top: 150px;
+	left: -10px;
+	top: 0;
 	font-size: 40px;
 	box-shadow: 0px 2px 2px darkred;
 }
@@ -278,23 +375,47 @@ button:hover {
 	border-right: 2px solid transparent;
 }
 
+.close-timer-button {
+	position: absolute;
+	right: -20px;
+	top: -25px;
+	color: rgb(231,29,54);
+	padding: 5px 10px;
+}
+
+.close-timer-button:hover {
+	border: 1px solid rgb(1,22,39);
+	color: rgb(1,22,39);
+	padding: 4px 9px;
+	border-radius: 3px;
+
+}
 .clock {
 	position: relative;
 	width: 200px;
 	height: 200px;
 	background: transparent;
 	border-radius: 100%;
-	border: 10px solid #E34819;
+	border: 10px solid rgb(231,29,54);
 	padding: 50px;
 	margin: auto;
+	color: rgb(231,29,54);
 
 	font-size: 40px;
 	box-shadow: 0px 2px 2px #555555;
 	box-shadow: inset 0px 2px 2px #555555;
 }
 
+.time {
+	color: rgb(231,29,54);
+    text-shadow: 0px 1px 2px rgb(1,22,39);
+    position: absolute;
+    left: 95px;
+    top: 130px;
+}
+
 .clock-multi-button {
-	background: #E34819;
+	background: rgb(231,29,54);
 	padding: 20px;
 	width: 200px;
 
@@ -302,6 +423,11 @@ button:hover {
 	margin-top: 10px;
 	border-radius: 3px;
 	box-shadow: 0px 2px 2px #555555;
+}
+
+.clock-multi-button:hover {
+	background: rgb(1,22,39);
+	color: rgb(253,255,252);
 }
 
 /*/ /*/ /*/ finish modal /*/ /*/ /*/
@@ -323,7 +449,7 @@ button:hover {
 
 	display: inline-block;
 
-	background: #E34819;
+	background: rgb(231,29,54);
 	margin: 10px;
 	width: 200px;
 	height: 100px;
@@ -354,7 +480,7 @@ button:hover {
 	height: 200px;
 	background: transparent;
 	border-radius: 100%;
-	border: 10px solid #E34819;
+	border: 10px solid rgb(231,29,54);
 
 	border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
@@ -368,13 +494,13 @@ button:hover {
 .progress-bar-cover {
 	z-index: 1;
 	position: absolute;
-	top: -10px;
+	top: -9px;
 	left: -9px;
 	width: 200px;
 	height: 200px;
 	background: transparent;
 	border-radius: 100%;
-	border: 10px solid #E34819;
+	border: 10px solid rgb(231,29,54);
 
 	border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
@@ -391,7 +517,7 @@ button:hover {
 .progress-bar-1 {
 	z-index: 0;
 	position: absolute;
-	top: -10px;
+	top: -9px;
 	left: -9px;
 	width: 200px;
 	height: 200px;
@@ -408,4 +534,25 @@ button:hover {
 }
 
 
+/*/ Welcome page /*/
 
+.first-main, .second-main {
+	height: 400px;
+	width: 100%;
+	text-align: center;
+	padding: 20px 0;
+}
+
+.first-main {
+	background: rgb(1,22,39);
+	color: rgb(253,255,252);
+}
+
+.second-main {
+	background: rgb(253,255,252);
+	color: rgb(1,22,39);
+}
+
+.second-main .submit {
+	color: rgb(253,255,252);
+}

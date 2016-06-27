@@ -52,7 +52,7 @@ var TaskFormButton = React.createClass({
   		if (!this.state.pressed) {
   			return(
           <button className="task-creation-button" onClick={this.isPressed}>
-    				<p>Add a task..</p>
+    				<div>Add a task..</div>
           </button>
   			);
   		}

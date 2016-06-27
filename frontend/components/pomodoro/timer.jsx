@@ -10,7 +10,7 @@ var Timer = React.createClass({
 	getInitialState: function () {
 		return ({ 
 			minutes: 0, 
-			seconds: 15, 
+			seconds: 5, 
 			paused: true, 
 			started: false, 
 			modal: false, 
@@ -47,7 +47,9 @@ var Timer = React.createClass({
 				this.setState({seconds: seconds});	
 			} else {
 				this.endTime();
-				this.removePomodoro();
+				if (this.props.task) {
+					this.removePomodoro();	
+				};
 			};
 		};
 	},
@@ -92,6 +94,10 @@ var Timer = React.createClass({
 	    	progress: 1500, 
 	    	alarm: false 
 	    });
+  	},
+
+  	closeTimer: function () {
+  		this.context.router.push('/');
   	},
 
   	deleteTask: function () {
@@ -171,37 +177,46 @@ var Timer = React.createClass({
 		if (this.state.alarm) {
 			alarm = <audio><source src="./../../../app/assets/sounds/alarm.mp3" type="audio/mp3"/></audio>
 		}
+
+		var subject = "Let's do a task!";
+		var pomodoros = "";
+		if (this.props.task) {
+			subject = this.props.task.subject;
+			pomodoros = this.props.task.pomodoros;
+		};
 		
 		return (
 			<div className="timer-container">
 			<div className="pomodoro-container">
 
-				{this.props.task.subject}
-				<ul className="pomodoro">
-				<li>
-				<div >
-				<div className="leaves">
-					<div className="leaf-1"></div>
-					<div className="leaf-2"></div>
-					<div className="leaf-3"></div>
-					<div className="leaf-4"></div>
-					<div className="leaf-5"></div>
+				{subject}
 
-				</div>
-				</div>
-				</li>
-				<li>
-				<div className="pomodoro-count">{this.props.task.pomodoros}</div>
-				</li>
-				</ul>
 
 				<div className="clock"> 
-					{minutes}:{seconds} 
+					<ul className="pomodoro">
+						<li>
+							<div >
+								<div className="leaves">
+									<div className="leaf-1"></div>
+									<div className="leaf-2"></div>
+									<div className="leaf-3"></div>
+									<div className="leaf-4"></div>
+									<div className="leaf-5"></div>
+
+								</div>
+							</div>
+						</li>
+						<li>
+							<div className="pomodoro-count">{pomodoros}</div>
+						</li>
+					</ul>
+					<div className="time">{minutes}:{seconds}</div> 
 					<div className="progress-bar">
 					<div className="progress-bar-cover" style={progressBarCover}></div>
 					<div className="progress-bar-1" style={rotater}></div>
 					<div className="progress-blank"></div>
 				</div>
+				<button className="close-timer-button" onClick={this.closeTimer}>X</button>
 				</div>				
 				{button}
 			</div>

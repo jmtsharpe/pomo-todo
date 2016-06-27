@@ -20,7 +20,6 @@ var resetTask = function (task) {
 };
 
 TaskStore.all = function () {
-  debugger
   var tasks = [];
   for (var id in _tasks) {
     if (_tasks.hasOwnProperty(id)) {

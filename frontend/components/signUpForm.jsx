@@ -50,16 +50,7 @@ var SignUpForm = React.createClass({
 						<br />
 						<button className="submit">Submit</button>
 					</form>
-					<div className="sign-up-form">
-						<h2 className="sign-up-header">Have a Google account?</h2>
-						<button className="submit">Sign up with Google</button>
-					</div>
 				</div>
-				<div>
-					<p>Already have a Mello acount?</p>
-					<button className="login" onClick={this.goToLogin}>Login...</button>
-				</div>
-
 			</main>
     );
   },

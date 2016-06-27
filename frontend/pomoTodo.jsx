@@ -16,6 +16,7 @@ var App = require('./components/app/app.jsx');
 var LoginForm = require('./components/loginForm');
 var SignUpForm = require('./components/signUpForm');
 var Welcome = require('./components/welcome');
+var Timer = require('./components/pomodoro/timer.jsx');
 
 var SessionStore = require("./stores/session");
 
@@ -23,6 +24,7 @@ var SessionStore = require("./stores/session");
 var routes = (
   <Route path="/" component={App} onEnter={_requireLoggedIn}>
     <Route path="tasks/:id" component={TaskShow} onEnter={_requireLoggedIn}/>
+    <Route path="timer" component={Timer} onEnter={_requireLoggedIn}/>
   </Route>
 );
 
@@ -41,7 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function _requireLoggedIn(nextState, replace, asyncCompletionCallback) {
-  debugger
   if (!SessionStore.currentUserHasBeenFetched()) {
     ApiUtil.fetchCurrentUser(_redirectIfNotLoggedIn);
   } else {
