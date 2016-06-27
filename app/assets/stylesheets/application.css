@@ -101,7 +101,7 @@ button:hover {
 .over-head-logo {
 	margin: auto;
 	width: 100%;
-	float: center;
+	float: left;
 }
 
 .logout {
@@ -112,7 +112,7 @@ button:hover {
 .logout:hover {
 	cursor: pointer;
 	padding: 9px;
-	border-radius: 1px solid rgb(1,22,39);
+	border: 1px solid rgb(1,22,39);
 	color: rgb(1,22,39);
 
 }
